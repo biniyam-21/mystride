@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, Component } from "react";
+import { Analytics } from "@vercel/analytics/next"
 
 class ErrorBoundary extends Component {
   state = { error: null };
