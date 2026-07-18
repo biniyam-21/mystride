@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
 import { navItems, mockData } from "../data/mockData";
 import mypic from "../assets/images/mypic.jpg";
-
 // Variant tree: parent controls icon + label children together
 const rowVariants = {
   rest:  { x: 0 },

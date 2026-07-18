@@ -4,7 +4,7 @@ import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus } from "lucide-react"
 import { useLocation } from "react-router-dom";
 import { findResponse, suggestedQuestions } from "../../data/ragMock";
 import { mockData } from "../../data/mockData";
-import mypic from "../assets/images/mypic.jpg";
+import mypic from "../../assets/images/mypic.jpg";
 
 /* ─── Brand SVG icons ───────────────────────────────────── */
 function IconWhatsApp() {
