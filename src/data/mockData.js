@@ -34,7 +34,6 @@ export const mockData = {
     certificates: 1,
     languages: ["TypeScript", "JavaScript", "Java", "SQL", "Python"],
     skills: ["Full-Stack Architecture", "REST API Design", "Relational Data Modeling", "Auth & Role-Based Access", "UI Engineering"],
-    avatar: "https://avatars.githubusercontent.com/u/66387541?v=4",
     roles: ["Software Engineer", "Full-Stack Developer", "React + Next.js Developer"],
     social: {
       github: "https://github.com/biniyam-21",

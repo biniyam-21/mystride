@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ThemeToggle from "./shared/ThemeToggle";
 import { mockData } from "../data/mockData";
+import mypic from "../assets/images/mypic.jpg";
 
 const MENU_SECTIONS = [
   {
@@ -48,7 +49,7 @@ function UserMenu({ onClose }) {
       {/* Profile header */}
       <div className="flex items-center gap-3 border-b border-ink-650/50 px-4 py-3.5">
         <img
-          src={mockData.user.avatar}
+          src={mypic}
           alt=""
           className="h-9 w-9 rounded-full object-cover ring-2 ring-accent-500/40"
         />
@@ -165,7 +166,7 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
               className="flex items-center gap-2 rounded-full border border-ink-650 bg-ink-800 p-1 pr-3 text-sm text-zinc-300 transition hover:border-accent-400/50"
             >
               <img
-                src={mockData.user.avatar}
+                src={mypic}
                 alt=""
                 className="h-8 w-8 rounded-full object-cover"
               />

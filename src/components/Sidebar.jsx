@@ -4,6 +4,7 @@ import { Search, Settings, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
 import { navItems, mockData } from "../data/mockData";
+import mypic from "../assets/images/mypic.jpg";
 
 // Variant tree: parent controls icon + label children together
 const rowVariants = {
@@ -163,7 +164,7 @@ function SidebarContent({ onSearchOpen, onClose }) {
         <div className="flex items-center gap-3 rounded-xl px-3 py-2.5">
           <div className="relative shrink-0">
             <img
-              src={mockData.user.avatar}
+              src={mypic}
               alt={mockData.user.name}
               className="h-8 w-8 rounded-full object-cover ring-2 ring-accent-500/30"
             />

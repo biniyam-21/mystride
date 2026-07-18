@@ -4,6 +4,7 @@ import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus } from "lucide-react"
 import { useLocation } from "react-router-dom";
 import { findResponse, suggestedQuestions } from "../../data/ragMock";
 import { mockData } from "../../data/mockData";
+import mypic from "../assets/images/mypic.jpg";
 
 /* ─── Brand SVG icons ───────────────────────────────────── */
 function IconWhatsApp() {
@@ -151,7 +152,7 @@ function Message({ role, content, isTyping }) {
       </div>
       {!isBot && (
         <img
-          src={mockData.user.avatar}
+          src={mypic}
           alt="You"
           className="h-6 w-6 shrink-0 rounded-full border border-accent-400/20 object-cover"
         />

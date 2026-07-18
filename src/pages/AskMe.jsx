@@ -4,6 +4,8 @@ import { Send, Sparkles, RotateCcw, ChevronRight, Bot } from "lucide-react";
 import PageWrapper from "../components/shared/PageWrapper";
 import { findResponse, suggestedQuestions } from "../data/ragMock";
 import { mockData } from "../data/mockData";
+import mypic from "../assets/images/mypic.jpg";
+
 
 /* ─── Message text renderer ─────────────────────────────── */
 function FormattedText({ text }) {
@@ -80,7 +82,7 @@ function Message({ role, content, isTyping }) {
 
       {!isBot && (
         <img
-          src={mockData.user.avatar}
+          src={mypic}
           alt="You"
           className="h-8 w-8 shrink-0 rounded-full border-2 border-accent-400/20 object-cover"
         />
