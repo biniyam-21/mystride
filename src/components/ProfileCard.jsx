@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Download, ArrowRight } from "lucide-react";
 import Card from "./Card";
 import { mockData } from "../data/mockData";
+import mypic from "../assets/images/mypic.jpg";
 
 function IconGithub() {
   return (
@@ -85,7 +86,8 @@ export default function ProfileCard() {
       <div className="relative h-28 bg-metal-flow sm:h-36">
         <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent,rgba(255,255,255,.08),transparent)]" />
         <img
-          src={user.avatar}
+          src={mypic}
+
           alt={user.name}
           className="absolute -bottom-10 left-5 h-20 w-20 rounded-full border-4 border-ink-800 object-cover shadow-glow sm:-bottom-12 sm:left-6 sm:h-24 sm:w-24"
         />

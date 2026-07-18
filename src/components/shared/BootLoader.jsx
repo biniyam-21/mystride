@@ -130,7 +130,7 @@ export default function BootLoader({ onDone }) {
                 <span className="h-3 w-3 rounded-full bg-[#28c840]" />
                 <span className="ml-auto flex items-center gap-1.5 text-[11px] text-zinc-600">
                   <Terminal size={11} />
-                  ishaan@portfolio — zsh — 80×24
+                  Biniyam@portfolio — zsh — 80×24
                 </span>
               </div>
 

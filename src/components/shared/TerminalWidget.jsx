@@ -5,7 +5,7 @@ import { useScrollStart } from "../../hooks/gsapUtils";
 
 const SCRIPT = [
   { delay: 300,  type: "cmd", text: "whoami" },
-  { delay: 600,  type: "out", text: "ishaan-gupta — backend dev & problem solver" },
+  { delay: 600, type: "out", text: "Biniyam tesfu— backend dev & problem solver" },
   { delay: 1100, type: "cmd", text: "cat stack.json" },
   { delay: 1500, type: "out", text: '{ "languages": ["Java", "Python", "TypeScript", "Go"] }' },
   { delay: 2100, type: "cmd", text: "git log --oneline -3" },
@@ -54,7 +54,7 @@ export default function TerminalWidget() {
         <span className="h-3 w-3 rounded-full bg-emerald-500/80" />
         <span className="ml-3 flex items-center gap-1.5 text-xs text-zinc-400">
           <Terminal size={12} />
-          ishaan@portfolio ~ zsh
+          Biniyam@portfolio ~ zsh
         </span>
       </div>
 

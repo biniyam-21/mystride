@@ -110,7 +110,7 @@ function QuestionChip({ label, onClick }) {
 const WELCOME = {
   role: "bot",
   content:
-    "Hi! I'm Ishaan's AI assistant. 👋\n\nI can answer questions about his **experience**, **skills**, **projects**, **availability**, and more.\n\nWhat would you like to know?",
+    "Hi! I'm Biniyam's AI assistant. 👋\n\nI can answer questions about his **experience**, **skills**, **projects**, **availability**, and more.\n\nWhat would you like to know?",
   id: "welcome",
 };
 
@@ -183,7 +183,7 @@ export default function AskMe() {
               <Sparkles size={16} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white">Ask About Ishaan</h1>
+              <h1 className="text-lg font-bold text-white">Ask About Biniyam</h1>
               <p className="text-xs text-zinc-400">
                 AI-powered Q&amp;A · Mock RAG · Real integration coming soon
               </p>
@@ -251,7 +251,7 @@ export default function AskMe() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything about Ishaan…"
+              placeholder="Ask anything about Biniyam"
               rows={1}
               disabled={isTyping}
               className="flex-1 resize-none bg-transparent text-sm text-white placeholder-zinc-600 outline-none disabled:opacity-50"

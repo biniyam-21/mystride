@@ -242,7 +242,7 @@ const WELCOME = {
   role: "bot",
   id: "welcome",
   content:
-    "Hi! I'm Ishaan's AI assistant. 👋\n\nAsk me anything about his **experience**, **skills**, **projects**, or **availability**!",
+    "Hi! I'm Biniyam's AI assistant. 👋\n\nAsk me anything about his **experience**, **skills**, **projects**, or **availability**!",
 };
 
 function getDelay(text) {
@@ -376,7 +376,7 @@ export default function AskMeWidget() {
             key="chat-panel"
             role="dialog"
             aria-modal="true"
-            aria-label="Ask about Ishaan — AI chat"
+            aria-label="Ask about Biniyam — AI chat"
             variants={panelVariants}
             initial="initial"
             animate="animate"
@@ -394,7 +394,7 @@ export default function AskMeWidget() {
             <div className="flex items-center gap-3 border-b border-ink-650/70 bg-gradient-to-r from-accent-600/10 to-transparent px-4 py-3.5">
               <BotAvatar size="lg" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white">Ask About Ishaan</p>
+                <p className="text-sm font-semibold text-white">Ask About Biniyam</p>
                 <div className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   <p className="text-[10px] text-zinc-400">AI assistant · Mock mode</p>

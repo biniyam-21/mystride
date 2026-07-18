@@ -20,17 +20,17 @@ function IconLinkedin() {
 const socials = [
   {
     label: "GitHub",
-    href: "https://github.com/ishaan-gupta",
+    href: "https://github.com/B=biniyam-21",
     icon: IconGithub,
   },
   {
     label: "LinkedIn",
-    href: "https://linkedin.com/in/ishaangupta",
+    href: "https://linkedin.com/in/Biniyam-Tesfu",
     icon: IconLinkedin,
   },
   {
     label: "Email",
-    href: "mailto:ishaan.gupta@stride.dev",
+    href: "mailto:biniyam.tesfu@gmail.com",
     icon: () => <Mail size={13} />,
   },
 ];
