@@ -44,7 +44,7 @@ function UserMenu({ onClose }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: -8 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
-      className="absolute right-0 top-[calc(100%+10px)] z-50 w-60 overflow-hidden rounded-2xl border border-ink-650/70 bg-ink-900/95 shadow-panel backdrop-blur-xl"
+      className="absolute right-0 top-[calc(100%+10px)] z-50 w-[min(88vw,15rem)] overflow-hidden rounded-2xl border border-ink-650/70 bg-ink-900/95 shadow-panel backdrop-blur-xl"
     >
       {/* Profile header */}
       <div className="flex items-center gap-3 border-b border-ink-650/50 px-4 py-3.5">
@@ -111,8 +111,8 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-ink-650/50 bg-ink-950/80 px-3 py-2.5 backdrop-blur-xl sm:px-6 sm:py-3 lg:ml-80 lg:px-8">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+    <header className="sticky top-0 z-20 border-b border-ink-650/50 bg-ink-950/80 px-2 py-2.5 backdrop-blur-xl sm:px-6 sm:py-3 lg:ml-80 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {/* Hamburger — mobile only */}
           <button
@@ -132,7 +132,7 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <button
             onClick={onSearchOpen}
             className="hidden items-center gap-2 rounded-full border border-ink-650 bg-ink-800 px-4 py-2 text-sm text-zinc-400 transition hover:border-accent-400/40 hover:text-zinc-300 sm:flex"

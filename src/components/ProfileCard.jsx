@@ -96,7 +96,7 @@ export default function ProfileCard() {
       <div className="space-y-5 px-4 pb-5 pt-14 sm:space-y-6 sm:px-6 sm:pb-6 sm:pt-16">
         {/* Name + availability */}
         <div>
-          <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
             <h1 className="font-display text-2xl font-bold text-white">{user.name}</h1>
             <AvailabilityBadge />
           </div>
@@ -111,7 +111,7 @@ export default function ProfileCard() {
         </div>
 
         {/* CTA buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <button
             onClick={() => navigate("/projects")}
             className="flex items-center justify-center gap-2 rounded-xl bg-accent-600 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-500"

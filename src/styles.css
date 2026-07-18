@@ -75,15 +75,28 @@
 html {
   background: rgb(var(--ink-950));
   font-family: "JetBrains Mono", ui-monospace, monospace;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
   font-family: "JetBrains Mono", ui-monospace, monospace;
   background:
     radial-gradient(circle at top left, rgb(var(--accent-500) / 0.12), transparent 30rem),
     #0d0d0f;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }
 
 button,

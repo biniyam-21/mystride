@@ -204,7 +204,7 @@ function SidebarContent({ onSearchOpen, onClose }) {
 export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
   const isFirstVisit = !sessionStorage.getItem("portfolio-booted");
   const sidebarClass =
-    "fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-ink-650/60 bg-ink-950/96 px-5 py-6 backdrop-blur-xl lg:flex";
+    "fixed inset-y-0 left-0 z-30 hidden w-[min(84vw,20rem)] flex-col border-r border-ink-650/60 bg-ink-950/96 px-4 py-6 backdrop-blur-xl lg:flex lg:w-80 lg:px-5";
 
   return (
     <>
@@ -250,7 +250,7 @@ export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-50 flex w-80 flex-col border-r border-ink-650/60 bg-ink-950 px-5 py-6 lg:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex w-[min(84vw,20rem)] flex-col border-r border-ink-650/60 bg-ink-950 px-4 py-6 lg:hidden"
             >
               <SidebarContent onSearchOpen={onSearchOpen} onClose={onClose} />
             </motion.aside>

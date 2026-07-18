@@ -60,7 +60,7 @@ function CurrentlyBuildingSection() {
 
   return (
     <div className="space-y-3">
-      <div ref={headingRef} className="flex items-center justify-between">
+      <div ref={headingRef} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <Hammer size={16} className="text-accent-400" />
           <h2 className="font-display text-base font-semibold text-white">Currently Building</h2>
@@ -121,7 +121,7 @@ function DashboardGreeting() {
   const { text, Icon, sub } = useGreeting();
   const { user } = mockData;
   return (
-    <motion.div variants={fadeUp} className="flex items-center justify-between gap-4">
+    <motion.div variants={fadeUp} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <div>
         <div className="flex items-center gap-2.5">
           <Icon size={18} className="text-accent-400" />

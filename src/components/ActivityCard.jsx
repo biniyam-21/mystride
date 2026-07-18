@@ -101,7 +101,7 @@ export default function ActivityCard() {
 
   return (
     <Card className="p-4 sm:p-6">
-      <div role="tablist" aria-label="Activity categories" className="flex gap-2 overflow-x-auto pb-2">
+      <div role="tablist" aria-label="Activity categories" className="flex flex-wrap gap-2 overflow-x-auto pb-2">
         {tabs.map(({ label }, index) => {
           const isActive = activeTab === index;
           return (
