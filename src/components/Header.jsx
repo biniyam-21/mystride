@@ -44,7 +44,7 @@ function UserMenu({ onClose }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: -8 }}
       transition={{ duration: 0.15, ease: "easeOut" }}
-      className="absolute right-0 top-[calc(100%+10px)] z-50 w-[min(88vw,15rem)] overflow-hidden rounded-2xl border border-ink-650/70 bg-ink-900/95 shadow-panel backdrop-blur-xl"
+      className="absolute -right-2 top-[calc(100%+10px)] z-50 w-[min(90vw,16rem)] max-w-xs overflow-hidden rounded-2xl border border-ink-650/70 bg-ink-900/95 shadow-panel backdrop-blur-xl sm:-right-0"
     >
       {/* Profile header */}
       <div className="flex items-center gap-3 border-b border-ink-650/50 px-4 py-3.5">
@@ -111,8 +111,8 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-ink-650/50 bg-ink-950/80 px-2 py-2.5 backdrop-blur-xl sm:px-6 sm:py-3 lg:ml-80 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
+    <header className="sticky top-0 z-20 w-full border-b border-ink-650/50 bg-ink-950/80 px-3 py-2.5 backdrop-blur-xl sm:px-5 sm:py-3 lg:ml-20 lg:px-6 xl:ml-24 xl:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-nowrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-2">
           {/* Hamburger — mobile only */}
           <button
@@ -132,22 +132,22 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
           </button>
         </div>
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center justify-end gap-1.5 sm:gap-2">
           <button
             onClick={onSearchOpen}
-            className="hidden items-center gap-2 rounded-full border border-ink-650 bg-ink-800 px-4 py-2 text-sm text-zinc-400 transition hover:border-accent-400/40 hover:text-zinc-300 sm:flex"
+            className="hidden items-center gap-2 rounded-full border border-ink-650 bg-ink-800 px-3 py-1.5 text-xs text-zinc-400 transition hover:border-accent-400/40 hover:text-zinc-300 md:flex"
           >
-            <Search size={14} className="text-accent-400" />
-            Search…
-            <kbd className="rounded border border-ink-650 bg-ink-900 px-1 py-0.5 text-[10px] text-zinc-400">⌘K</kbd>
+            <Search size={13} className="text-accent-400" />
+            <span className="hidden lg:inline">Search…</span>
+            <kbd className="hidden rounded border border-ink-650 bg-ink-900 px-1 py-0.5 text-[9px] text-zinc-400 lg:inline">⌘K</kbd>
           </button>
 
           <button
             onClick={() => navigate("/contact")}
-            className="hidden items-center gap-1.5 text-sm font-medium text-zinc-400 transition hover:text-accent-300 sm:flex"
+            className="hidden items-center gap-1.5 text-xs text-zinc-400 transition hover:text-accent-300 md:flex"
           >
-            <Briefcase size={13} />
-            Hire Me
+            <Briefcase size={12} />
+            <span className="hidden lg:inline">Hire</span>
           </button>
 
           <ThemeToggle />

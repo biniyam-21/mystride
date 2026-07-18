@@ -19,14 +19,14 @@ function ProjectCard({ project }) {
   return (
     <Card className="group flex h-full flex-col overflow-hidden transition-all duration-250 hover:border-accent-400/35 hover:shadow-glow">
       {/* Gradient banner */}
-      <div className={`relative h-20 bg-gradient-to-br ${project.accent || "from-accent-600/25 to-blue-600/15"}`}>
+      <div className={`relative h-16 sm:h-20 bg-gradient-to-br ${project.accent || "from-accent-600/25 to-blue-600/15"}`}>
         <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_40%,rgba(0,0,0,0.4))]" />
         {project.featured && (
-          <span className="absolute left-3 top-3 rounded-full border border-amber-400/30 bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300">
+          <span className="absolute left-2 sm:left-3 top-2 sm:top-3 rounded-full border border-amber-400/30 bg-amber-500/20 px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-amber-300">
             Featured
           </span>
         )}
-        <div className="absolute right-3 top-3 flex gap-1.5">
+        <div className="absolute right-2 sm:right-3 top-2 sm:top-3 flex gap-1">
           {project.github && (
             <a
               href={project.github}
@@ -34,7 +34,7 @@ function ProjectCard({ project }) {
               rel="noreferrer"
               title="GitHub"
               aria-label="View on GitHub"
-              className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-white/70 backdrop-blur-sm transition hover:border-white/30 hover:text-white"
+              className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-white/70 backdrop-blur-sm transition hover:border-white/30 hover:text-white"
             >
               <IconGithub />
             </a>
@@ -44,46 +44,47 @@ function ProjectCard({ project }) {
               href={project.demo}
               title="Live demo"
               aria-label="View live demo"
-              className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-white/70 backdrop-blur-sm transition hover:border-white/30 hover:text-white"
+              className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg border border-white/10 bg-black/30 text-white/70 backdrop-blur-sm transition hover:border-white/30 hover:text-white"
             >
-              <ExternalLink size={13} />
+              <ExternalLink size={12} className="sm:w-[13px] sm:h-[13px]" />
             </a>
           )}
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="font-display font-semibold text-white transition-colors group-hover:text-accent-200">
+      <div className="flex flex-1 flex-col p-3 sm:p-5">
+        <h3 className="font-display font-semibold text-sm sm:text-base text-white transition-colors group-hover:text-accent-200 line-clamp-2">
           {project.title}
         </h3>
-        <p className="mt-2 flex-1 text-sm leading-6 text-zinc-400">{project.description}</p>
+        <p className="mt-2 flex-1 text-xs sm:text-sm leading-5 text-zinc-400 line-clamp-3">{project.description}</p>
 
         {/* Impact metric */}
         {project.impact && (
-          <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/8 px-3 py-1.5">
-            <TrendingUp size={12} className="shrink-0 text-emerald-400" />
-            <span className="text-xs font-medium text-emerald-300">{project.impact}</span>
+          <div className="mt-2 sm:mt-3 flex items-center gap-1.5 rounded-lg border border-emerald-500/20 bg-emerald-500/8 px-2 sm:px-3 py-1 sm:py-1.5">
+            <TrendingUp size={11} className="shrink-0 text-emerald-400" />
+            <span className="text-[10px] sm:text-xs font-medium text-emerald-300">{project.impact}</span>
           </div>
         )}
 
         {/* Tags */}
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="mt-2 sm:mt-3 flex flex-wrap gap-1">
           {project.tags.map((t) => (
-            <span key={t} className="rounded-md border border-ink-650 bg-ink-950/40 px-2 py-0.5 text-xs text-zinc-400">
+            <span key={t} className="rounded-md border border-ink-650 bg-ink-950/40 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-xs text-zinc-400">
               {t}
             </span>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="mt-4 flex items-center gap-4 border-t border-ink-650/60 pt-3 text-xs text-zinc-400">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full" style={{ background: project.langColor }} />
-            {project.language}
+        <div className="mt-3 sm:mt-4 flex items-center gap-2 sm:gap-4 border-t border-ink-650/60 pt-2 sm:pt-3 text-[10px] sm:text-xs text-zinc-400">
+          <span className="flex items-center gap-1">
+            <span className="h-2 w-2 rounded-full" style={{ background: project.langColor }} />
+            <span className="hidden sm:inline">{project.language}</span>
+            <span className="sm:hidden truncate">{project.language.split("/")[0]}</span>
           </span>
-          <span className="ml-auto">
-            {project.github ? "Open source" : "Company project"}
+          <span className="ml-auto whitespace-nowrap">
+            {project.github ? "Open source" : "Company"}
           </span>
         </div>
       </div>
@@ -177,8 +178,11 @@ export default function Projects() {
         </div>
 
         {/* Grid — GSAP stagger reveal; Framer Motion handles filter re-order animations */}
-        <motion.div ref={gridRef} layout className="grid gap-4 sm:grid-cols-2">
-          <AnimatePresence mode="popLayout">
+        <motion.div
+          ref={gridRef}
+          layout
+          className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2"
+        >          <AnimatePresence mode="popLayout">
             {filtered.map((project) => (
               <motion.div
                 key={project.id}

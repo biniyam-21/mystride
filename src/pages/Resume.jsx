@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import { mockData } from "../data/mockData";
 import { experience, education, certs, RESUME_PDF_URL, RESUME_UPDATED } from "../data/resume";
 import { useScrollReveal, useStaggerReveal } from "../hooks/gsapUtils";
+import mypic from "../assets/images/mypic.jpg";
 
 export default function Resume() {
   const { user } = mockData;
@@ -45,7 +46,7 @@ export default function Resume() {
         {/* Header */}
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <img src={user.avatar} alt="" className="h-16 w-16 rounded-2xl border-2 border-accent-400/30 object-cover print:hidden" />
+            <img src={mypic} alt="" className="h-16 w-16 rounded-2xl border-2 border-accent-400/30 object-cover print:hidden" />
             <div>
               <h2 className="text-xl font-bold text-white">{user.name}</h2>
               <p className="text-sm text-zinc-400">{user.roles.join(" · ")}</p>

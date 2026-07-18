@@ -204,7 +204,7 @@ function SidebarContent({ onSearchOpen, onClose }) {
 export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
   const isFirstVisit = !sessionStorage.getItem("portfolio-booted");
   const sidebarClass =
-    "fixed inset-y-0 left-0 z-30 hidden w-[min(84vw,20rem)] flex-col border-r border-ink-650/60 bg-ink-950/96 px-4 py-6 backdrop-blur-xl lg:flex lg:w-80 lg:px-5";
+    "fixed inset-y-0 left-0 z-[120] hidden w-72 flex-col border-r border-ink-650/60 bg-ink-950/96 px-5 py-6 backdrop-blur-xl lg:flex overflow-y-auto";
 
   return (
     <>
@@ -226,7 +226,7 @@ export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
       )}
 
       {/* Mobile drawer */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {mobileOpen && (
           <>
             {/* Backdrop */}
@@ -237,8 +237,8 @@ export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               aria-hidden="true"
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
-              onClick={onClose}
+              className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm lg:hidden"
+              onMouseDown={onClose}
             />
             {/* Drawer */}
             <motion.aside
@@ -250,7 +250,8 @@ export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-50 flex w-[min(84vw,20rem)] flex-col border-r border-ink-650/60 bg-ink-950 px-4 py-6 lg:hidden"
+              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-y-0 left-0 z-[115] flex w-[min(85vw,16rem)] max-w-sm flex-col border-r border-ink-650/60 bg-ink-950 px-4 py-6 overflow-y-auto lg:hidden"
             >
               <SidebarContent onSearchOpen={onSearchOpen} onClose={onClose} />
             </motion.aside>

@@ -24,12 +24,15 @@ function IconLinkedin() {
 
 function AvailabilityBadge() {
   return (
-    <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-      <span className="relative flex h-2 w-2">
+    <span className="shrink-0 flex max-w-full items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-300">
+      <span className="relative flex h-1.5 w-1.5 shrink-0">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
       </span>
-      Available for work
+      <span className="min-w-0">
+        <span className="hidden sm:inline">Available for work</span>
+        <span className="sm:hidden">Available</span>
+      </span>
     </span>
   );
 }
@@ -81,7 +84,7 @@ export default function ProfileCard() {
   const navigate = useNavigate();
 
   return (
-    <Card>
+    <Card className="w-full max-w-full md:w-72 lg:w-96 xl:w-[28rem]">
       {/* Banner */}
       <div className="relative h-28 bg-metal-flow sm:h-36">
         <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent,rgba(255,255,255,.08),transparent)]" />
@@ -93,14 +96,20 @@ export default function ProfileCard() {
         />
       </div>
 
-      <div className="space-y-5 px-4 pb-5 pt-14 sm:space-y-6 sm:px-6 sm:pb-6 sm:pt-16">
+      <div className="space-y-4 px-4 pb-4 pt-12 sm:space-y-5 sm:px-6 sm:pb-5 sm:pt-14 lg:pt-16">
         {/* Name + availability */}
         <div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-            <h1 className="font-display text-2xl font-bold text-white">{user.name}</h1>
-            <AvailabilityBadge />
+          <div className="flex flex-col gap-2 sm:gap-3">
+            <div className="flex flex-wrap items-start justify-between gap-2 min-w-0">
+              <h1 className="font-display flex-1 min-w-0 break-words font-bold text-white sm:text-2xl text-xl">
+                {user.name}
+              </h1>
+              <div className="min-w-0">
+                <AvailabilityBadge />
+              </div>
+            </div>
+            <p className="mt-1 break-words text-sm font-medium text-accent-300">{user.tagline}</p>
           </div>
-          <p className="mt-1 text-sm font-medium text-accent-300">{user.tagline}</p>
           <RoleTags roles={user.roles} />
           <SocialLinks social={user.social} />
         </div>
@@ -111,20 +120,22 @@ export default function ProfileCard() {
         </div>
 
         {/* CTA buttons */}
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div className="grid w-full grid-cols-2 gap-2">
           <button
             onClick={() => navigate("/projects")}
-            className="flex items-center justify-center gap-2 rounded-xl bg-accent-600 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-500"
+            className="flex items-center justify-center gap-2 rounded-xl bg-accent-600 px-3 py-2 text-xs sm:text-sm font-semibold text-white transition hover:bg-accent-500 active:scale-95"
           >
-            <ArrowRight size={15} />
-            View Projects
+            <ArrowRight size={14} className="sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">View Projects</span>
+            <span className="sm:hidden">Projects</span>
           </button>
           <button
             onClick={() => navigate("/resume")}
-            className="flex items-center justify-center gap-2 rounded-xl border border-ink-650 bg-ink-800 px-3 py-2.5 text-sm font-semibold text-zinc-200 transition hover:border-accent-400/60 hover:text-white"
+            className="flex items-center justify-center gap-2 rounded-xl border border-ink-650 bg-ink-800 px-3 py-2 text-xs sm:text-sm font-semibold text-zinc-200 transition hover:border-accent-400/60 hover:text-white active:scale-95"
           >
-            <Download size={15} />
-            Resume
+            <Download size={14} className="sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Resume</span>
+            <span className="sm:hidden">CV</span>
           </button>
         </div>
       </div>

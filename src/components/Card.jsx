@@ -24,8 +24,8 @@ export default function Card({ children, className = "", beam = false, beamProps
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setGlow((g) => ({ ...g, visible: false }))}
-      whileHover={noHover ? {} : { y: -3, transition: { duration: 0.22, ease: "easeOut" } }}
-      className={`group card-accent-hover relative overflow-hidden rounded-2xl border border-ink-650/80 bg-ink-800/[0.88] shadow-panel backdrop-blur transition-[border-color,box-shadow] duration-300 hover:border-accent-400/25 ${className}`}
+      whileHover={noHover ? {} : { y: -2, transition: { duration: 0.22, ease: "easeOut" } }}
+      className={`group card-accent-hover relative w-full overflow-hidden rounded-xl sm:rounded-2xl border border-ink-650/80 bg-ink-800/[0.88] shadow-panel backdrop-blur transition-[border-color,box-shadow] duration-300 hover:border-accent-400/25 ${className}`}
     >
       {beam && (
         <div style={{ opacity }}>

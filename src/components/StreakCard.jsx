@@ -32,17 +32,17 @@ export default function StreakCard() {
         <span className="font-semibold text-white">{mockData.streak.longest} days</span>
       </p>
 
-      <div className="mt-5 overflow-x-auto pb-1">
-        <div className="mb-3 grid min-w-[330px] grid-cols-3 text-xs text-zinc-400">
+      <div className="mt-5 w-full overflow-x-auto pb-1">
+        <div className="mb-3 grid min-w-[280px] grid-cols-3 text-[10px] sm:text-xs text-zinc-400">
           {mockData.streak.months.map((month) => (
             <span key={month}>{month}</span>
           ))}
         </div>
-        <div className="grid min-w-[330px] grid-flow-col grid-rows-7 gap-1.5">
+        <div className="grid min-w-[280px] grid-flow-col grid-rows-7 gap-1">
           {mockData.streak.cells.map((level, index) => (
             <span
               key={index}
-              className={`h-3.5 w-3.5 cursor-pointer rounded-[4px] streak-${level} transition-transform duration-100 hover:scale-125 hover:ring-1 hover:ring-accent-400/50`}
+              className={`h-3 w-3 sm:h-3.5 sm:w-3.5 cursor-pointer rounded-[3px] sm:rounded-[4px] streak-${level} transition-transform duration-100 hover:scale-110 hover:ring-1 hover:ring-accent-400/50`}
               onMouseEnter={(e) => handleEnter(e, index, level)}
               onMouseLeave={() => setTooltip(null)}
             />

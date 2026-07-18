@@ -103,14 +103,14 @@ function Shell() {
     <>
       <ScrollToTop />
       <AuroraBackground />
-      <div className="app-shell min-h-screen overflow-x-hidden bg-ink-950/90 text-zinc-100">
+      <div className="app-shell w-full min-h-screen overflow-x-hidden bg-ink-950/90 text-zinc-100">
         <Sidebar onSearchOpen={openPalette} mobileOpen={mobileMenuOpen} onClose={closeMobileMenu} />
         <Header onSearchOpen={openPalette} onMenuOpen={openMobileMenu} />
         <AskMeWidget />
         <CommandPalette open={paletteOpen} onClose={closePalette} />
 
-        <main className="flex min-h-screen flex-col px-2 py-3 sm:px-6 sm:py-6 lg:ml-80 lg:px-8">
-          <div className="mx-auto w-full max-w-7xl flex-1 min-w-0">
+        <main className="flex w-full min-h-screen min-w-0 flex-col px-3 py-4 sm:px-5 sm:py-5 lg:ml-20 lg:px-6 xl:ml-24 xl:px-8">
+          <div className="mx-auto min-w-0 w-full max-w-7xl flex-1">
             <MobileBrand />
             <AnimatedRoutes />
           </div>

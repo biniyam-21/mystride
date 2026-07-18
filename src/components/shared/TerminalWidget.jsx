@@ -26,12 +26,11 @@ export default function TerminalWidget() {
 
   // Gate all timers behind `started`
   useEffect(() => {
-    if (!started) return;
     const timers = SCRIPT.map(({ delay, type, text }) =>
       setTimeout(() => setLines((prev) => [...prev, { type, text }]), delay)
     );
     return () => timers.forEach(clearTimeout);
-  }, [started]);
+  }, []);
 
   // Scroll only within the terminal's own overflow container — never the page
   useEffect(() => {
@@ -41,9 +40,10 @@ export default function TerminalWidget() {
   }, [lines]);
 
   useEffect(() => {
+    if (!started) return;
     const id = setInterval(() => setCursor((c) => !c), 530);
     return () => clearInterval(id);
-  }, []);
+  }, [started]);
 
   return (
     <div ref={containerRef} className="relative overflow-hidden rounded-2xl border border-ink-650/80 bg-[#0c0c0e] shadow-panel">

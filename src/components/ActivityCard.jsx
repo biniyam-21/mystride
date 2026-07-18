@@ -20,7 +20,7 @@ function DifficultyBadge({ difficulty }) {
 function ProblemTable() {
   return (
     <div className="mt-6 overflow-x-auto">
-      <table className="w-full min-w-[620px] text-left text-sm">
+      <table className="w-full min-w-0 text-left text-sm">
         <thead className="text-xs uppercase text-zinc-400">
           <tr className="border-b border-ink-650">
             <th className="py-3 pr-4 font-semibold">Status</th>
@@ -101,7 +101,7 @@ export default function ActivityCard() {
 
   return (
     <Card className="p-4 sm:p-6">
-      <div role="tablist" aria-label="Activity categories" className="flex flex-wrap gap-2 overflow-x-auto pb-2">
+      <div role="tablist" aria-label="Activity categories" className="flex flex-wrap gap-1.5 overflow-x-auto pb-2">
         {tabs.map(({ label }, index) => {
           const isActive = activeTab === index;
           return (
@@ -115,7 +115,7 @@ export default function ActivityCard() {
               tabIndex={isActive ? 0 : -1}
               onClick={() => setActiveTab(index)}
               onKeyDown={(e) => handleTabKeyDown(e, index)}
-              className={`relative shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-150 ${
+              className={`relative shrink-0 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors duration-150 ${
                 isActive
                   ? "text-ink-950"
                   : "border border-ink-650 bg-ink-950/50 text-zinc-400 hover:border-accent-400/40 hover:text-white"

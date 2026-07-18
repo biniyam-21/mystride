@@ -52,13 +52,13 @@ export default function Achievements() {
         </div>
 
         {/* Stats strip */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-4">
           {stats.map(({ label, value }) => (
-            <Card key={label} className="p-4 text-center">
-              <p className="text-2xl font-bold text-white">
+            <Card key={label} className="p-3 sm:p-4 text-center">
+              <p className="text-lg sm:text-2xl font-bold text-white">
                 <AnimatedCounter to={value} />
               </p>
-              <p className="mt-1 text-xs text-zinc-400">{label}</p>
+              <p className="mt-1 text-[10px] sm:text-xs text-zinc-400">{label}</p>
             </Card>
           ))}
         </div>
@@ -68,7 +68,7 @@ export default function Achievements() {
           variants={stagger}
           initial="initial"
           animate="animate"
-          className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4"
+          className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
           {badges.map((badge) => {
             const Icon = badge.icon;
@@ -76,21 +76,21 @@ export default function Achievements() {
             return (
               <motion.div key={badge.label} variants={item}>
                 <div
-                  className={`group relative flex flex-col items-center gap-3 rounded-2xl border p-5 text-center transition-all duration-200 ${
+                  className={`group relative flex flex-col items-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border p-3 sm:p-5 text-center transition-all duration-200 ${
                     badge.unlocked
-                      ? `bg-gradient-to-b ${colors} cursor-default hover:scale-[1.04] hover:shadow-glow`
+                      ? `bg-gradient-to-b ${colors} cursor-default hover:scale-105 hover:shadow-glow`
                       : "border-ink-650 bg-ink-800/40 opacity-40 grayscale"
                   }`}
                 >
                   {!badge.unlocked && (
-                    <span className="absolute right-2 top-2 text-[10px] text-zinc-400">🔒</span>
+                    <span className="absolute right-1 top-1 sm:right-2 sm:top-2 text-[9px] sm:text-[10px] text-zinc-400">🔒</span>
                   )}
                   <div className="badge-hex">
-                    <Icon size={22} />
+                    <Icon size={18} className="sm:w-6 sm:h-6" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{badge.label}</p>
-                    <p className="mt-0.5 text-xs text-zinc-400">{badge.desc}</p>
+                  <div className="min-w-0">
+                    <p className="text-xs sm:text-sm font-semibold text-white">{badge.label}</p>
+                    <p className="mt-0.5 text-[10px] sm:text-xs text-zinc-400 leading-tight">{badge.desc}</p>
                   </div>
                 </div>
               </motion.div>
