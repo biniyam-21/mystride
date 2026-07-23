@@ -19,7 +19,7 @@ const labelVariants = {
   hover: { x: 2, transition: { duration: 0.2, ease: "easeOut" } },
 };
 
-const MotionNavLink = motion(NavLink);
+const MotionNavLink = motion.create(NavLink);
 
 function NavItem({ item }) {
   const Icon = item.icon;
@@ -107,9 +107,15 @@ function NavItem({ item }) {
 function SidebarContent({ onSearchOpen, onClose }) {
   const location = useLocation();
 
+  // Close the mobile drawer only when the user navigates to a *different* page.
+  // Skip the initial mount (prevPath ref starts as null).
+  const prevPath = React.useRef(null);
   React.useEffect(() => {
-    if (onClose) onClose();
-  }, [location.pathname]);
+    if (prevPath.current !== null && prevPath.current !== location.pathname) {
+      if (onClose) onClose();
+    }
+    prevPath.current = location.pathname;
+  }, [location.pathname, onClose]);
 
   return (
     <>
@@ -238,7 +244,7 @@ export default function Sidebar({ onSearchOpen, mobileOpen, onClose }) {
               transition={{ duration: 0.2 }}
               aria-hidden="true"
               className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm lg:hidden"
-              onMouseDown={onClose}
+              onClick={onClose}
             />
             {/* Drawer */}
             <motion.aside

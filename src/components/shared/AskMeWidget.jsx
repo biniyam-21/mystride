@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus } from "lucide-react";
-import { useLocation } from "react-router-dom";
-import { findResponse, suggestedQuestions } from "../../data/ragMock";
-import { mockData } from "../../data/mockData";
+import { useLocation, useNavigate } from "react-router-dom";
+import { fetchRAGResponse } from "../../services/ragApi";
+import { suggestedQuestions } from "../../data/ragMock";
 import mypic from "../../assets/images/mypic.jpg";
 
 /* ─── Brand SVG icons ───────────────────────────────────── */
@@ -78,6 +78,143 @@ function useIsDesktop() {
   return isDesktop;
 }
 
+/* ─── Claude-style Hardcoded Thinking Phrases ───────────── */
+const CLAUDE_PHRASES = [
+  "Searching portfolio knowledge base...",
+  "Analyzing experience & skills...",
+  "Synthesizing RAG context...",
+  "Formulating response...",
+];
+
+function ClaudeTypingIndicator() {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % CLAUDE_PHRASES.length);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="flex flex-col gap-1 py-0.5">
+      <div className="flex items-center gap-1">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="h-1.5 w-1.5 rounded-full bg-accent-400"
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 0.55, repeat: Infinity, delay: i * 0.14, ease: "easeInOut" }}
+          />
+        ))}
+      </div>
+      <motion.p
+        key={index}
+        initial={{ opacity: 0, y: 2 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -2 }}
+        transition={{ duration: 0.25 }}
+        className="text-[10px] font-medium text-accent-300/90 italic"
+      >
+        {CLAUDE_PHRASES[index]}
+      </motion.p>
+    </div>
+  );
+}
+
+/* ─── Smart Route Suggestions Mapper ───────────────────── */
+function getRelevantRoutes(content = "", sources = []) {
+  const text = (content + " " + JSON.stringify(sources)).toLowerCase();
+  const routes = [];
+
+  if (
+    text.includes("project") ||
+    text.includes("finot") ||
+    text.includes("di-assist") ||
+    text.includes("hsim") ||
+    text.includes("built")
+  ) {
+    routes.push({ label: "Explore Projects", path: "/projects", icon: "🚀" });
+  }
+
+  if (
+    text.includes("skill") ||
+    text.includes("tech") ||
+    text.includes("stack") ||
+    text.includes("react") ||
+    text.includes("node") ||
+    text.includes("java")
+  ) {
+    routes.push({ label: "View Skills", path: "/skills", icon: "⚡" });
+  }
+
+  if (
+    text.includes("experience") ||
+    text.includes("orbit") ||
+    text.includes("jpmorgan") ||
+    text.includes("work") ||
+    text.includes("job") ||
+    text.includes("career")
+  ) {
+    routes.push({ label: "Work History", path: "/resume", icon: "💼" });
+  }
+
+  if (
+    text.includes("contact") ||
+    text.includes("hire") ||
+    text.includes("available") ||
+    text.includes("email") ||
+    text.includes("reach")
+  ) {
+    routes.push({ label: "Get in Touch", path: "/contact", icon: "✉️" });
+  }
+
+  if (
+    text.includes("achievement") ||
+    text.includes("certif") ||
+    text.includes("forage") ||
+    text.includes("education")
+  ) {
+    routes.push({ label: "View Achievements", path: "/achievements", icon: "🏆" });
+  }
+
+  if (routes.length === 0) {
+    routes.push({ label: "View Dashboard", path: "/dashboard", icon: "📊" });
+  }
+
+  return routes.slice(0, 2);
+}
+
+function SmartRouteSuggestions({ content, sources, onCloseChat }) {
+  const navigate = useNavigate();
+  const routes = getRelevantRoutes(content, sources);
+
+  const handleNavigate = (path) => {
+    if (onCloseChat) onCloseChat();
+    navigate(path);
+  };
+
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-ink-650/40 pt-2">
+      <span className="text-[9px] font-medium uppercase tracking-wider text-zinc-400">
+        Suggested details:
+      </span>
+      {routes.map((r) => (
+        <motion.button
+          key={r.path}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => handleNavigate(r.path)}
+          className="flex items-center gap-1 rounded border border-accent-400/30 bg-accent-500/10 px-2 py-0.5 text-[10px] font-medium text-accent-300 transition hover:border-accent-400/60 hover:bg-accent-500/20 hover:text-white"
+        >
+          <span>{r.icon}</span>
+          <span>{r.label}</span>
+        </motion.button>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Text renderer (supports **bold** and \n) ──────────── */
 function FormattedText({ text }) {
   return (
@@ -103,22 +240,6 @@ function FormattedText({ text }) {
   );
 }
 
-/* ─── Typing dots ───────────────────────────────────────── */
-function TypingDots() {
-  return (
-    <div className="flex items-center gap-1 px-0.5">
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          className="h-1.5 w-1.5 rounded-full bg-accent-400"
-          animate={{ y: [0, -4, 0] }}
-          transition={{ duration: 0.55, repeat: Infinity, delay: i * 0.14, ease: "easeInOut" }}
-        />
-      ))}
-    </div>
-  );
-}
-
 /* ─── Bot avatar ────────────────────────────────────────── */
 function BotAvatar({ size = "sm" }) {
   const dim = size === "sm" ? "h-6 w-6" : "h-8 w-8";
@@ -131,7 +252,7 @@ function BotAvatar({ size = "sm" }) {
 }
 
 /* ─── Message bubble ────────────────────────────────────── */
-function Message({ role, content, isTyping }) {
+function Message({ role, content, sources, isTyping, onCloseChat }) {
   const isBot = role === "bot";
   return (
     <motion.div
@@ -142,13 +263,18 @@ function Message({ role, content, isTyping }) {
     >
       {isBot && <BotAvatar size="sm" />}
       <div
-        className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 text-xs ${
+        className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs ${
           isBot
-            ? "rounded-bl-sm border border-ink-650/70 bg-ink-800/90 text-zinc-300"
+            ? "rounded-bl-sm border border-ink-650/70 bg-ink-800/90 text-zinc-200"
             : "rounded-br-sm border border-accent-400/20 bg-accent-500/15 text-zinc-100"
         }`}
       >
-        {isTyping ? <TypingDots /> : <FormattedText text={content} />}
+        {isTyping ? <ClaudeTypingIndicator /> : <FormattedText text={content} />}
+
+        {/* Smart Route Suggestions instead of raw OpenRouter / MD tags */}
+        {isBot && !isTyping && content && (
+          <SmartRouteSuggestions content={content} sources={sources} onCloseChat={onCloseChat} />
+        )}
       </div>
       {!isBot && (
         <img
@@ -166,7 +292,7 @@ function Chip({ label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex shrink-0 items-center gap-1 rounded-full border border-ink-650 bg-ink-800/60 px-3 py-1.5 text-[11px] text-zinc-400 transition hover:border-accent-400/40 hover:text-accent-300"
+      className="flex shrink-0 items-center gap-1 rounded-full border border-ink-650 bg-ink-800/60 px-3 py-1.5 text-[11px] text-zinc-300 transition hover:border-accent-400/40 hover:text-accent-300"
     >
       <ChevronRight size={9} className="text-accent-500" />
       {label}
@@ -242,12 +368,8 @@ const WELCOME = {
   role: "bot",
   id: "welcome",
   content:
-    "Hi! I'm Biniyam's AI assistant. 👋\n\nAsk me anything about his **experience**, **skills**, **projects**, or **availability**!",
+    "Hi! I'm Biniyam's AI assistant powered by OpenRouter RAG. 👋\n\nAsk me anything about his **experience**, **skills**, **projects**, or **availability**!",
 };
-
-function getDelay(text) {
-  return Math.min(700 + text.length * 1.1, 2000);
-}
 
 /* ─── Widget ────────────────────────────────────────────── */
 export default function AskMeWidget() {
@@ -308,7 +430,7 @@ export default function AskMeWidget() {
   }, [chatOpen, menuOpen, closeChat]);
 
   const sendMessage = useCallback(
-    (text) => {
+    async (text) => {
       const query = text.trim();
       if (!query || isTyping) return;
 
@@ -317,14 +439,19 @@ export default function AskMeWidget() {
       setIsTyping(true);
       setMsgCount((n) => n + 1);
 
-      const response = findResponse(query);
-      setTimeout(() => {
-        setIsTyping(false);
-        setMessages((prev) => [
-          ...prev,
-          { role: "bot", content: response, id: Date.now() + 1 },
-        ]);
-      }, getDelay(response));
+      const res = await fetchRAGResponse(query);
+
+      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "bot",
+          content: res.answer,
+          sources: res.sources,
+          meta: res.meta,
+          id: Date.now() + 1,
+        },
+      ]);
     },
     [isTyping]
   );
@@ -386,8 +513,8 @@ export default function AskMeWidget() {
               fixed z-50 flex flex-col overflow-hidden
               border border-ink-650/80 bg-ink-900/96 shadow-2xl shadow-black/60 backdrop-blur-xl
               bottom-0 left-0 right-0 rounded-t-2xl
-              lg:bottom-24 lg:right-6 lg:left-auto lg:w-[370px] lg:rounded-2xl
-              ${minimized ? "h-auto" : "max-h-[88vh] lg:h-[520px] lg:max-h-none"}
+              lg:bottom-24 lg:right-6 lg:left-auto lg:w-[380px] lg:rounded-2xl
+              ${minimized ? "h-auto" : "max-h-[88vh] lg:h-[530px] lg:max-h-none"}
             `}
           >
             {/* Header */}
@@ -397,7 +524,7 @@ export default function AskMeWidget() {
                 <p className="text-sm font-semibold text-white">Ask About Biniyam</p>
                 <div className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <p className="text-[10px] text-zinc-400">AI assistant · Mock mode</p>
+                  <p className="text-[10px] text-zinc-400">OpenRouter RAG · Online</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -433,7 +560,14 @@ export default function AskMeWidget() {
                 <div className="flex-1 space-y-3 overflow-y-auto p-4">
                   <AnimatePresence initial={false}>
                     {messages.map((msg) => (
-                      <Message key={msg.id} role={msg.role} content={msg.content} />
+                      <Message
+                        key={msg.id}
+                        role={msg.role}
+                        content={msg.content}
+                        sources={msg.sources}
+                        isTyping={msg.isTyping}
+                        onCloseChat={closeChat}
+                      />
                     ))}
                     {isTyping && (
                       <Message key="typing" role="bot" content="" isTyping />
@@ -455,32 +589,42 @@ export default function AskMeWidget() {
                   </div>
                 )}
 
+                {/* Spacious Glass Input Box (No Inner Outline) */}
                 <form
                   onSubmit={handleSubmit}
-                  className="flex items-center gap-2.5 border-t border-ink-650/60 bg-ink-950/40 px-4 py-3"
+                  className="border-t border-ink-650/60 bg-ink-950/70 p-3"
                 >
-                  <input
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage(input);
-                      }
-                    }}
-                    placeholder="Ask anything…"
-                    disabled={isTyping}
-                    className="flex-1 bg-transparent text-sm text-white placeholder-zinc-600 outline-none disabled:opacity-40"
-                  />
-                  <motion.button
-                    type="submit"
-                    disabled={!input.trim() || isTyping}
-                    whileTap={{ scale: 0.9 }}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-accent-600 text-white transition hover:bg-accent-500 disabled:cursor-not-allowed disabled:opacity-30"
-                  >
-                    <Send size={13} />
-                  </motion.button>
+                  <div className="flex items-center gap-2.5 rounded-2xl border border-ink-650/80 bg-ink-900/90 p-2.5 backdrop-blur-xl shadow-lg transition-all duration-300 focus-within:border-accent-400/60 focus-within:ring-2 focus-within:ring-accent-500/20">
+                    <textarea
+                      ref={inputRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          sendMessage(input);
+                        }
+                      }}
+                      placeholder="Ask anything about Biniyam…"
+                      rows={1}
+                      disabled={isTyping}
+                      className="flex-1 resize-none bg-transparent px-1 text-xs sm:text-sm text-white placeholder-zinc-500 border-none outline-none focus:outline-none focus:ring-0 focus:border-none ring-0 shadow-none disabled:opacity-40 leading-relaxed"
+                      style={{ minHeight: "44px", maxHeight: "110px", overflowY: "auto" }}
+                      onInput={(e) => {
+                        e.target.style.height = "auto";
+                        e.target.style.height = Math.max(44, e.target.scrollHeight) + "px";
+                      }}
+                    />
+                    <motion.button
+                      type="submit"
+                      disabled={!input.trim() || isTyping}
+                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ scale: 1.05 }}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-accent-600 to-accent-500 text-white transition-all hover:from-accent-500 hover:to-accent-400 disabled:cursor-not-allowed disabled:opacity-30 shadow-glow"
+                    >
+                      <Send size={14} />
+                    </motion.button>
+                  </div>
                 </form>
               </>
             )}
@@ -488,7 +632,7 @@ export default function AskMeWidget() {
         )}
       </AnimatePresence>
 
-      {/* Speed-dial + FAB */}
+      {/* Ringing Phone Robot FAB Button (Label Removed) */}
       {!chatOpen && (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
           {/* Speed-dial options */}
@@ -516,59 +660,65 @@ export default function AskMeWidget() {
                   onClick={openChat}
                   icon={<Sparkles size={20} />}
                   label="Ask AI"
-                  bg="bg-accent-600 hover:bg-accent-500 fab-accent-glow"
+                  bg="bg-gradient-to-br from-accent-500 to-accent-700 hover:from-accent-400 hover:to-accent-600 shadow-[0_0_20px_rgba(139,92,246,0.6)]"
                   delay={0.12}
                 />
               </>
             )}
           </AnimatePresence>
 
-          {/* Robot FAB */}
+          {/* Robot FAB Button with Ringing Phone Movement on Icon Only */}
           <div className="relative">
-            {/* Outer pulse ring */}
-            <motion.span
-              className="absolute inset-0 rounded-full bg-accent-500/30"
-              animate={{ scale: [1, 1.55, 1], opacity: [0.6, 0, 0.6] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            />
-            {/* Inner pulse ring */}
-            <motion.span
-              className="absolute inset-0 rounded-full bg-accent-400/20"
-              animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-            />
+            {/* Pulse beam emerging from icon */}
+            {!menuOpen && (
+              <motion.span
+                className="absolute inset-0 rounded-full border border-accent-400/70 bg-accent-500/15 shadow-[0_0_12px_rgba(139,92,246,0.4)] pointer-events-none"
+                animate={{
+                  scale: [1, 1.55],
+                  opacity: [0.85, 0],
+                }}
+                transition={{
+                  duration: 2.0,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                }}
+              />
+            )}
 
             <motion.button
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? "Close contact menu" : "Open contact menu"}
               aria-expanded={menuOpen}
               aria-haspopup="true"
-              animate={
-                menuOpen
-                  ? { rotate: 15, y: 0 }
-                  : { rotate: [0, -6, 6, -4, 4, 0], y: [0, -5, 0, -3, 0] }
-              }
-              transition={
-                menuOpen
-                  ? { type: "spring", stiffness: 300, damping: 20 }
-                  : {
-                      rotate: { duration: 2.5, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" },
-                      y: { duration: 2.5, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" },
-                    }
-              }
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
-              className={`relative flex h-16 w-16 items-center justify-center rounded-full text-white shadow-2xl transition-colors ${
+              className={`relative flex h-16 w-16 items-center justify-center rounded-full text-white shadow-xl transition-all ${
                 menuOpen
-                  ? "bg-gradient-to-br from-accent-400 to-accent-600"
-                  : "bg-gradient-to-br from-accent-500 to-accent-700"
+                  ? "bg-gradient-to-br from-accent-400 to-accent-600 ring-2 ring-accent-400/40"
+                  : "bg-gradient-to-br from-accent-500 via-purple-600 to-accent-700 ring-2 ring-accent-400/50 shadow-[0_0_20px_rgba(139,92,246,0.4)]"
               }`}
-              style={{ boxShadow: "0 0 24px rgb(var(--accent-500) / 0.55), 0 4px 20px rgba(0,0,0,0.5)" }}
-              title={menuOpen ? "Close" : "Contact me"}
+              title={menuOpen ? "Close" : "Contact me & Ask AI"}
             >
+              {/* Ringing Phone Oscillation Animation on Icon Only */}
               <motion.div
-                animate={{ rotate: menuOpen ? 180 : 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                animate={
+                  menuOpen
+                    ? { rotate: 180, scale: 1 }
+                    : {
+                        rotate: [0, -18, 18, -15, 15, -10, 10, -5, 5, 0],
+                        scale: [1, 1.1, 1, 1.08, 1],
+                      }
+                }
+                transition={
+                  menuOpen
+                    ? { type: "spring", stiffness: 300, damping: 22 }
+                    : {
+                        duration: 1.6,
+                        repeat: Infinity,
+                        repeatDelay: 1.2,
+                        ease: "easeInOut",
+                      }
+                }
               >
                 {menuOpen ? <X size={24} /> : <IconRobot size={34} />}
               </motion.div>
@@ -576,28 +726,12 @@ export default function AskMeWidget() {
               {/* Eye glow dots when idle */}
               {!menuOpen && (
                 <motion.span
-                  className="absolute top-3.5 left-1/2 -translate-x-1/2 h-1 w-4 rounded-full bg-white/20"
-                  animate={{ opacity: [0.2, 0.6, 0.2] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-3.5 left-1/2 -translate-x-1/2 h-1 w-4 rounded-full bg-white/40 shadow-glow"
+                  animate={{ opacity: [0.3, 0.9, 0.3] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                 />
               )}
             </motion.button>
-
-            {/* Tooltip label when idle */}
-            <AnimatePresence>
-              {!menuOpen && (
-                <motion.span
-                  initial={{ opacity: 0, x: 8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 8 }}
-                  transition={{ delay: 1.2, duration: 0.3 }}
-                  className="pointer-events-none absolute right-[72px] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-ink-650/80 bg-ink-900/95 px-2.5 py-1.5 text-xs font-medium text-accent-300 shadow-lg backdrop-blur-sm"
-                >
-                  Contact me
-                  <span className="absolute right-[-5px] top-1/2 -translate-y-1/2 border-4 border-transparent border-l-ink-900/95" />
-                </motion.span>
-              )}
-            </AnimatePresence>
           </div>
         </div>
       )}

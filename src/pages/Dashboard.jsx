@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Hammer, ArrowRight, Sun, Sunset, Moon, Coffee } from "lucide-react";
+import { Hammer, ArrowRight, Sun, Sunset, Moon, Coffee, Sparkles, MessageSquare, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "../components/shared/PageWrapper";
 import ProfileCard from "../components/ProfileCard";
@@ -24,8 +24,6 @@ function useGreeting() {
 }
 
 const IS_FIRST = !sessionStorage.getItem("portfolio-booted");
-// Dashboard enters while boot is fading (~3.5-4.1s). Start at 3.3s so the
-// stagger animation is mid-flight when the overlay disappears.
 const DELAY = IS_FIRST ? 3.3 : 0;
 
 const stagger = { animate: { transition: { staggerChildren: 0.07 } } };
@@ -51,6 +49,97 @@ const progressColor = {
   blue: "bg-blue-500",
   amber: "bg-amber-500",
 };
+
+/* ─── AI Spotlight Hero Banner ──────────────────────────── */
+function AISpotlightBanner() {
+  const navigate = useNavigate();
+  const [dismissed, setDismissed] = useState(
+    () => sessionStorage.getItem("ai-spotlight-dismissed") === "true"
+  );
+
+  if (dismissed) return null;
+
+  const handleDismiss = () => {
+    sessionStorage.setItem("ai-spotlight-dismissed", "true");
+    setDismissed(true);
+  };
+
+  const handlePromptClick = (question) => {
+    navigate("/ask", { state: { initialQuestion: question } });
+  };
+
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="relative overflow-hidden rounded-2xl border border-accent-400/30 bg-gradient-to-r from-accent-950/70 via-ink-900/90 to-blue-950/60 p-4 sm:p-5 backdrop-blur-xl shadow-[0_0_30px_rgba(139,92,246,0.15)]"
+    >
+      {/* Decorative gradient glow background */}
+      <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-blue-500/15 blur-3xl" />
+
+      <div className="relative flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3.5">
+          <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent-500 to-accent-700 shadow-glow ring-2 ring-accent-400/30">
+            <Sparkles size={20} className="text-white animate-pulse" />
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm sm:text-base font-bold text-white">
+                Save Time — Talk to Biniyam's AI Assistant
+              </h2>
+              <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[9px] font-semibold text-emerald-300">
+                Live RAG
+              </span>
+            </div>
+            <p className="text-xs text-zinc-300 max-w-xl leading-relaxed">
+              Skip scrolling! Ask the AI assistant about Biniyam's <strong>tech stack</strong>, <strong>work experience</strong>, <strong>projects</strong>, or <strong>availability</strong> in seconds.
+            </p>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => navigate("/ask")}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent-600 to-accent-500 px-4 py-2.5 text-xs font-semibold text-white shadow-glow transition hover:from-accent-500 hover:to-accent-400"
+          >
+            <MessageSquare size={14} />
+            <span>Chat with AI</span>
+            <ArrowRight size={13} />
+          </motion.button>
+          <button
+            onClick={handleDismiss}
+            title="Dismiss notification"
+            className="grid h-8 w-8 place-items-center rounded-lg text-zinc-400 transition hover:bg-ink-700 hover:text-zinc-200"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* Suggested prompts */}
+      <div className="mt-3.5 flex flex-wrap items-center gap-2 border-t border-ink-650/40 pt-3">
+        <span className="text-[11px] font-medium text-zinc-400">Quick prompts:</span>
+        {[
+          "What is Biniyam's tech stack?",
+          "Tell me about Finot ERP",
+          "Is Biniyam available for hire?",
+        ].map((prompt) => (
+          <button
+            key={prompt}
+            onClick={() => handlePromptClick(prompt)}
+            className="rounded-full border border-ink-650/80 bg-ink-850/80 px-3 py-1 text-xs font-medium text-zinc-300 transition hover:border-accent-400/40 hover:bg-accent-500/10 hover:text-accent-300"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
 
 function CurrentlyBuildingSection() {
   const navigate = useNavigate();
@@ -155,6 +244,9 @@ export default function Dashboard() {
         className="space-y-4 sm:space-y-5"
       >
         <DashboardGreeting />
+
+        {/* AI Spotlight Hero Banner */}
+        <AISpotlightBanner />
 
         <motion.div
           variants={stagger}
