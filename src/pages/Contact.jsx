@@ -38,7 +38,7 @@ export default function Contact() {
     setErrorMsg("");
 
     try {
-      const rawUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/v1";
+      const rawUrl = import.meta.env.VITE_BACKEND_URL || "https://node-rag-engine.onrender.com/api/v1";
       const cleanUrl = rawUrl.replace(/\/api\/v1\/?$/, "");
       const res = await fetch(`${cleanUrl}/api/v1/contact`, {
         method: "POST",

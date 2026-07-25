@@ -1,6 +1,6 @@
 import { findResponse } from "../data/ragMock";
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/v1";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://node-rag-engine.onrender.com/api/v1";
 
 export async function fetchRAGResponse(question) {
   const query = question.trim();

@@ -34,7 +34,7 @@ export default function Blog() {
   });
 
   const getBaseUrl = () => {
-    const rawUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/v1";
+    const rawUrl = import.meta.env.VITE_BACKEND_URL || "https://node-rag-engine.onrender.com/api/v1";
     return rawUrl.replace(/\/api\/v1\/?$/, "");
   };
 
