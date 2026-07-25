@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
-const ACCENTS = ["violet", "blue", "emerald", "rose", "amber"];
+const ACCENTS = ["violet", "blue", "emerald", "amber"];
 const AUTO_CYCLE_MS = 60_000; // 1 minute
 
 const ThemeContext = createContext({

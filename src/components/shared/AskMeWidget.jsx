@@ -1,10 +1,20 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus } from "lucide-react";
+import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus, Mail } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchRAGResponse } from "../../services/ragApi";
 import { suggestedQuestions } from "../../data/ragMock";
 import mypic from "../../assets/images/mypic.jpg";
+import { useTheme } from "../../context/ThemeContext";
+
+/* ─── Accent → CSS color values map ─────────────────────── */
+const ACCENT_COLORS = {
+  violet:  { from: "#7c3aed", via: "#9333ea", to: "#6d28d9", glow: "139,92,246",  ring: "167,139,250" },
+  blue:    { from: "#2563eb", via: "#3b82f6", to: "#1d4ed8", glow: "59,130,246",  ring: "96,165,250"  },
+  emerald: { from: "#059669", via: "#10b981", to: "#047857", glow: "16,185,129",  ring: "52,211,153"  },
+  rose:    { from: "#e11d48", via: "#f43f5e", to: "#be123c", glow: "244,63,94",   ring: "251,113,133" },
+  amber:   { from: "#d97706", via: "#f59e0b", to: "#b45309", glow: "245,158,11",  ring: "251,191,36"  },
+};
 
 /* ─── Brand SVG icons ───────────────────────────────────── */
 function IconWhatsApp() {
@@ -374,6 +384,9 @@ const WELCOME = {
 /* ─── Widget ────────────────────────────────────────────── */
 export default function AskMeWidget() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { accent, accentChanging } = useTheme();
+  const ac = ACCENT_COLORS[accent] || ACCENT_COLORS.violet;
   const isDesktop = useIsDesktop();
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -655,33 +668,46 @@ export default function AskMeWidget() {
                   bg="bg-[#229ED9] hover:bg-[#1a8fc4] shadow-[0_0_16px_rgba(34,158,217,0.4)]"
                   delay={0.06}
                 />
+                {/* Contact Form */}
+                <DialOption
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate("/contact");
+                  }}
+                  icon={<Mail size={20} />}
+                  label="Contact Me"
+                  bg="bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-[0_0_16px_rgba(16,185,129,0.4)]"
+                  delay={0.10}
+                />
                 {/* AI Chat */}
                 <DialOption
                   onClick={openChat}
                   icon={<Sparkles size={20} />}
                   label="Ask AI"
-                  bg="bg-gradient-to-br from-accent-500 to-accent-700 hover:from-accent-400 hover:to-accent-600 shadow-[0_0_20px_rgba(139,92,246,0.6)]"
-                  delay={0.12}
+                  bg="bg-gradient-to-br from-accent-500 to-accent-700 hover:from-accent-400 hover:to-accent-600"
+                  delay={0.14}
                 />
               </>
             )}
           </AnimatePresence>
 
           {/* Robot FAB Button with Ringing Phone Movement on Icon Only */}
-          <div className="relative">
-            {/* Pulse beam emerging from icon */}
+          <motion.div
+            className="relative"
+            animate={accentChanging ? { scale: [1, 1.18, 1] } : {}}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          >
+            {/* Pulse beam emerging from icon — color synced to accent */}
             {!menuOpen && (
               <motion.span
-                className="absolute inset-0 rounded-full border border-accent-400/70 bg-accent-500/15 shadow-[0_0_12px_rgba(139,92,246,0.4)] pointer-events-none"
-                animate={{
-                  scale: [1, 1.55],
-                  opacity: [0.85, 0],
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  border: `1px solid rgba(${ac.ring},0.7)`,
+                  background: `rgba(${ac.glow},0.12)`,
+                  boxShadow: `0 0 12px rgba(${ac.glow},0.35)`,
                 }}
-                transition={{
-                  duration: 2.0,
-                  repeat: Infinity,
-                  ease: "easeOut",
-                }}
+                animate={{ scale: [1, 1.55], opacity: [0.85, 0] }}
+                transition={{ duration: 2.0, repeat: Infinity, ease: "easeOut" }}
               />
             )}
 
@@ -692,11 +718,14 @@ export default function AskMeWidget() {
               aria-haspopup="true"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
-              className={`relative flex h-16 w-16 items-center justify-center rounded-full text-white shadow-xl transition-all ${
-                menuOpen
-                  ? "bg-gradient-to-br from-accent-400 to-accent-600 ring-2 ring-accent-400/40"
-                  : "bg-gradient-to-br from-accent-500 via-purple-600 to-accent-700 ring-2 ring-accent-400/50 shadow-[0_0_20px_rgba(139,92,246,0.4)]"
-              }`}
+              style={{
+                background: menuOpen
+                  ? `linear-gradient(135deg, ${ac.from}, ${ac.to})`
+                  : `linear-gradient(135deg, ${ac.from}, ${ac.via}, ${ac.to})`,
+                boxShadow: `0 0 22px rgba(${ac.glow},0.45)`,
+                outline: `2px solid rgba(${ac.ring},0.45)`,
+              }}
+              className="relative flex h-16 w-16 items-center justify-center rounded-full text-white shadow-xl transition-all"
               title={menuOpen ? "Close" : "Contact me & Ask AI"}
             >
               {/* Ringing Phone Oscillation Animation on Icon Only */}
@@ -726,13 +755,14 @@ export default function AskMeWidget() {
               {/* Eye glow dots when idle */}
               {!menuOpen && (
                 <motion.span
-                  className="absolute top-3.5 left-1/2 -translate-x-1/2 h-1 w-4 rounded-full bg-white/40 shadow-glow"
+                  className="absolute top-3.5 left-1/2 -translate-x-1/2 h-1 w-4 rounded-full bg-white/40"
+                  style={{ boxShadow: `0 0 6px rgba(${ac.ring},0.8)` }}
                   animate={{ opacity: [0.3, 0.9, 0.3] }}
                   transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                 />
               )}
             </motion.button>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>

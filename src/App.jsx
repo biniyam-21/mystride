@@ -35,6 +35,7 @@ import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Blog from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
 import Stats from "./pages/Stats";
 import Achievements from "./pages/Achievements";
 import LearningJourney from "./pages/LearningJourney";
@@ -62,6 +63,7 @@ function AnimatedRoutes() {
         <Route path="/about"          element={<About />}           />
         <Route path="/projects"       element={<Projects />}        />
         <Route path="/blog"           element={<Blog />}            />
+        <Route path="/blog/:id"       element={<BlogDetail />}      />
         <Route path="/stats"          element={<Stats />}           />
         <Route path="/achievements"   element={<Achievements />}    />
         <Route path="/learning"       element={<LearningJourney />} />

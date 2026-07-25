@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Mail, Download, ArrowRight } from "lucide-react";
+import { Mail, Download, ArrowRight, MapPin } from "lucide-react";
 import Card from "./Card";
 import { mockData } from "../data/mockData";
 import mypic from "../assets/images/mypic.jpg";
@@ -109,6 +109,10 @@ export default function ProfileCard() {
               </div>
             </div>
             <p className="mt-1 break-words text-sm font-medium text-accent-300">{user.tagline}</p>
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-zinc-400">
+              <MapPin size={13} className="text-accent-400 shrink-0" />
+              <span>{user.location}</span>
+            </div>
           </div>
           <RoleTags roles={user.roles} />
           <SocialLinks social={user.social} />

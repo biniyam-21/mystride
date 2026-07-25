@@ -36,14 +36,11 @@ const ACCENT_SWATCHES = [
   { key: "violet", label: "Violet",  bg: "bg-violet-500",  ring: "ring-violet-400" },
   { key: "blue",   label: "Blue",    bg: "bg-blue-500",    ring: "ring-blue-400"   },
   { key: "emerald",label: "Emerald", bg: "bg-emerald-500", ring: "ring-emerald-400"},
-  { key: "rose",   label: "Rose",    bg: "bg-rose-500",    ring: "ring-rose-400"   },
   { key: "amber",  label: "Amber",   bg: "bg-amber-500",   ring: "ring-amber-400"  },
 ];
 
 export default function Settings() {
   const { isDark, toggle, accent, setAccent } = useTheme();
-  const [notifs, setNotifs] = React.useState(true);
-  const [publicProfile, setPublicProfile] = React.useState(true);
 
   return (
     <PageWrapper>
@@ -59,7 +56,7 @@ export default function Settings() {
           </div>
           <div className="px-1">
             <Row
-              label="Theme"
+              label="Theme Mode"
               desc={isDark ? "Currently using dark mode" : "Currently using light mode"}
             >
               <div className="flex items-center gap-2 rounded-xl border border-ink-650 bg-ink-950/40 p-1">
@@ -118,43 +115,6 @@ export default function Settings() {
                 ))}
               </div>
             </div>
-          </div>
-        </Card>
-
-        <Card className="px-5">
-          <div className="border-b border-ink-650/60 pb-3 pt-5 px-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Notifications</p>
-          </div>
-          <div className="px-1">
-            <Row label="Email Notifications" desc="Receive digest emails for activity">
-              <Toggle value={notifs} onChange={setNotifs} />
-            </Row>
-          </div>
-        </Card>
-
-        <Card className="px-5">
-          <div className="border-b border-ink-650/60 pb-3 pt-5 px-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Privacy</p>
-          </div>
-          <div className="px-1">
-            <Row label="Public Profile" desc="Allow others to view your profile">
-              <Toggle value={publicProfile} onChange={setPublicProfile} />
-            </Row>
-          </div>
-        </Card>
-
-        <Card className="px-5">
-          <div className="border-b border-ink-650/60 pb-3 pt-5 px-1">
-            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
-              <Trash2 size={11} className="text-rose-500" /> Danger Zone
-            </p>
-          </div>
-          <div className="px-1">
-            <Row label="Delete Account" desc="Permanently remove your account and data">
-              <button className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-400 transition hover:bg-rose-500/20">
-                Delete
-              </button>
-            </Row>
           </div>
         </Card>
       </div>

@@ -25,7 +25,7 @@ export const mockData = {
     summary:
       "I build full-stack products end to end — from a multi-branch ERP platform used by real businesses in Ethiopia to an AI-assisted healthcare drug information system. I care about clean architecture, honest engineering, and shipping software people actually rely on.",
     email: "biniyamxyz@gmail.com",
-    location: "Addis Ababa, Ethiopia",
+    location: "Addis Ababa, Ethiopia 🇪🇹",
     linkedin: "linkedin.com/in/biniyam-tesfu",
     github: "github.com/biniyam-21",
     availability: "Open to roles · Full-time & Contract",
@@ -103,8 +103,6 @@ export const navItems = [
   { icon: User,            label: "About Me",         path: "/about"         },
   { icon: FolderOpen,      label: "Projects",         path: "/projects"      },
   { icon: Zap,             label: "Skills",           path: "/skills"        },
-  { icon: Trophy,          label: "Achievements",     path: "/achievements"  },
-  { icon: BarChart3,       label: "Stats",            path: "/stats"         },
   { icon: Award,           label: "Certifications",   path: "/certifications"},
   { icon: FileText,        label: "Blog",             path: "/blog"          },
   { icon: BookOpen,        label: "Learning Journey", path: "/learning"      },

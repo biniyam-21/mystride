@@ -135,11 +135,15 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
         <div className="flex items-center justify-end gap-1.5 sm:gap-2">
           <button
             onClick={onSearchOpen}
-            className="hidden items-center gap-2 rounded-full border border-ink-650 bg-ink-800 px-3 py-1.5 text-xs text-zinc-400 transition hover:border-accent-400/40 hover:text-zinc-300 md:flex"
+            className="flex items-center gap-2.5 w-44 sm:w-60 md:w-72 justify-between rounded-full border border-ink-650/80 bg-ink-800/80 px-3.5 py-1.5 text-xs text-zinc-400 transition-all hover:border-accent-400/50 hover:bg-ink-800 hover:text-zinc-200 shadow-sm"
           >
-            <Search size={13} className="text-accent-400" />
-            <span className="hidden lg:inline">Search…</span>
-            <kbd className="hidden rounded border border-ink-650 bg-ink-900 px-1 py-0.5 text-[9px] text-zinc-400 lg:inline">⌘K</kbd>
+            <div className="flex items-center gap-2 min-w-0">
+              <Search size={14} className="text-accent-400 shrink-0" />
+              <span className="truncate">Search pages & articles…</span>
+            </div>
+            <kbd className="hidden sm:inline-flex shrink-0 items-center rounded border border-ink-650 bg-ink-900 px-1.5 py-0.5 text-[10px] font-mono text-zinc-400">
+              ⌘K
+            </kbd>
           </button>
 
           <button

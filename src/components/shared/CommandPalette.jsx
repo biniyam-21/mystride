@@ -11,8 +11,6 @@ const routes = [
   { label: "About Me", path: "/about", icon: User, desc: "Who I am" },
   { label: "Projects", path: "/projects", icon: FolderOpen, desc: "My work" },
   { label: "Blog", path: "/blog", icon: FileText, desc: "Articles & writing" },
-  { label: "Stats", path: "/stats", icon: BarChart3, desc: "Coding statistics" },
-  { label: "Achievements", path: "/achievements", icon: Trophy, desc: "Badges & milestones" },
   { label: "Learning Journey", path: "/learning", icon: BookOpen, desc: "Timeline" },
   { label: "Skills", path: "/skills", icon: Zap, desc: "Tech stack" },
   { label: "Certifications", path: "/certifications", icon: Award, desc: "Certs & courses" },

@@ -26,13 +26,39 @@ const socials = [
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const headerRef  = useScrollReveal({ y: 18, duration: 0.5 });
   const cardsRef   = useStaggerReveal({ stagger: 0.16, y: 28 });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSent(true);
+    setLoading(true);
+    setErrorMsg("");
+
+    try {
+      const rawUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/v1";
+      const cleanUrl = rawUrl.replace(/\/api\/v1\/?$/, "");
+      const res = await fetch(`${cleanUrl}/api/v1/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setSent(true);
+        setForm({ name: "", email: "", message: "" });
+      } else {
+        setErrorMsg(data.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+      setErrorMsg("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,13 +108,18 @@ export default function Contact() {
             >
               <CheckCircle size={40} className="text-emerald-400" />
               <h3 className="font-semibold text-white">Message sent!</h3>
-              <p className="text-sm text-zinc-400">I'll get back to you within 24 hours.</p>
+              <p className="text-sm text-zinc-400">I'll get back to you immediately.</p>
               <button onClick={() => setSent(false)} className="mt-2 text-sm text-accent-400 hover:underline">
-                Send another
+                Send another message
               </button>
             </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {errorMsg && (
+                <div className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-300">
+                  {errorMsg}
+                </div>
+              )}
               <div className="grid gap-4 sm:grid-cols-2">
                 {[
                   { id: "name", label: "Name", type: "text", placeholder: "Your name" },
@@ -102,7 +133,8 @@ export default function Contact() {
                       placeholder={placeholder}
                       value={form[id]}
                       onChange={(e) => setForm((f) => ({ ...f, [id]: e.target.value }))}
-                      className="w-full rounded-xl border border-ink-650 bg-ink-950/40 px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none transition focus:border-accent-400/60 focus:ring-1 focus:ring-accent-400/20"
+                      disabled={loading}
+                      className="w-full rounded-xl border border-ink-650 bg-ink-950/40 px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none transition focus:border-accent-400/60 focus:ring-1 focus:ring-accent-400/20 disabled:opacity-50"
                     />
                   </div>
                 ))}
@@ -115,15 +147,26 @@ export default function Contact() {
                   placeholder="What's on your mind?"
                   value={form.message}
                   onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                  className="w-full resize-none rounded-xl border border-ink-650 bg-ink-950/40 px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none transition focus:border-accent-400/60 focus:ring-1 focus:ring-accent-400/20"
+                  disabled={loading}
+                  className="w-full resize-none rounded-xl border border-ink-650 bg-ink-950/40 px-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none transition focus:border-accent-400/60 focus:ring-1 focus:ring-accent-400/20 disabled:opacity-50"
                 />
               </div>
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-500 active:scale-[0.98]"
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-500 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Send size={15} />
-                Send Message
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Sending...
+                  </span>
+                ) : (
+                  <>
+                    <Send size={15} />
+                    Send Message
+                  </>
+                )}
               </button>
             </form>
           )}

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { BorderBeam } from "@stianlarsen/border-beam";
 
-export default function Card({ children, className = "", beam = false, beamProps = {}, noHover = false }) {
+export default function Card({ children, className = "", beam = false, beamProps = {}, noHover = false, onClick, ...props }) {
   const { opacity = 1, colorFrom = "#9d6cff", colorTo = "#6366f1",
           duration = 10, borderWidth = 1.5, delay = 0, size = 220 } = beamProps;
 
@@ -22,6 +22,8 @@ export default function Card({ children, className = "", beam = false, beamProps
   return (
     <motion.section
       ref={cardRef}
+      onClick={onClick}
+      {...props}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setGlow((g) => ({ ...g, visible: false }))}
       whileHover={noHover ? {} : { y: -2, transition: { duration: 0.22, ease: "easeOut" } }}
