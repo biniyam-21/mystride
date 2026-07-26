@@ -91,8 +91,9 @@ export default function ProfileCard() {
         <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent,rgba(255,255,255,.08),transparent)]" />
         <img
           src={mypic}
-
           alt={user.name}
+          loading="lazy"
+          decoding="async"
           className="absolute -bottom-10 left-5 h-20 w-20 rounded-full border-4 border-ink-800 object-cover shadow-glow sm:-bottom-12 sm:left-6 sm:h-24 sm:w-24"
         />
       </div>

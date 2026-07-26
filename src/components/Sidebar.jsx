@@ -171,6 +171,8 @@ function SidebarContent({ onSearchOpen, onClose }) {
             <img
               src={mypic}
               alt={mockData.user.name}
+              loading="lazy"
+              decoding="async"
               className="h-8 w-8 rounded-full object-cover ring-2 ring-accent-500/30"
             />
             <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-ink-950 bg-emerald-400" />
