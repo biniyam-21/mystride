@@ -5,7 +5,7 @@ export const projects = [
     title: "Finot ERP",
     description:
       "Multi-branch enterprise resource planning platform for Ethiopian businesses — finance, inventory, operations, projects, and HR in one system. Built at Orbit Technology Solutions.",
-    impact: "Production ERP · multi-branch · role-based access control",
+    impact: "Production ERP · 8 modules · multi-branch · role-based access for 50+ users",
     tags: ["React", "Node.js", "Express", "Prisma", "PostgreSQL"],
     language: "TypeScript",
     langColor: "#3178c6",
@@ -19,7 +19,7 @@ export const projects = [
     title: "Di-Assist",
     description:
       "Healthcare drug information platform for clinicians — AI-powered assistant, drug interaction checker, analytics dashboard, and user management. Solo full-stack build.",
-    impact: "AI assistant · interaction checker · clinician analytics",
+    impact: "Solo full-stack build · RAG AI assistant · drug interaction checker · live in beta",
     tags: ["Next.js", "React 19", "Tailwind v4", "Prisma", "Better Auth"],
     language: "TypeScript",
     langColor: "#3178c6",
@@ -33,7 +33,7 @@ export const projects = [
     title: "This Portfolio",
     description:
       "The site you're looking at — dashboard-style portfolio with a command palette, AI-style assistant, terminal widgets, and GSAP micro-interactions.",
-    impact: "Command palette · AI assistant widget · custom design system",
+    impact: "Command palette · AI assistant widget · custom design system · deployed to production",
     tags: ["React", "Vite", "Tailwind CSS", "GSAP", "Framer Motion"],
     language: "JavaScript",
     langColor: "#f1e05a",
@@ -47,7 +47,7 @@ export const projects = [
     title: "HSIM Dashboard",
     description:
       "Information management dashboard — data tables, filtering, and role-aware views built with a modern TypeScript stack.",
-    impact: null,
+    impact: "Role-aware data tables · advanced filtering · TypeScript full-stack",
     tags: ["TypeScript", "React", "Dashboard"],
     language: "TypeScript",
     langColor: "#3178c6",

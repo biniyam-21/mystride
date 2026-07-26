@@ -183,25 +183,25 @@ a {
 }
 
 .streak-0 {
-  background: #232329;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .streak-1 {
-  background: #35245b;
+  background: rgb(var(--accent-500) / 0.22);
 }
 
 .streak-2 {
-  background: #5b36a5;
+  background: rgb(var(--accent-500) / 0.5);
 }
 
 .streak-3 {
-  background: rgb(var(--accent-600));
-  box-shadow: 0 0 14px rgb(var(--accent-600) / 0.24);
+  background: rgb(var(--accent-500) / 0.8);
+  box-shadow: 0 0 12px rgb(var(--accent-500) / 0.25);
 }
 
 .streak-4 {
   background: rgb(var(--accent-400));
-  box-shadow: 0 0 18px rgb(var(--accent-400) / 0.36);
+  box-shadow: 0 0 16px rgb(var(--accent-400) / 0.4);
   animation: border-pulse 2.8s ease-in-out infinite;
 }
 

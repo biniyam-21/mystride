@@ -9,6 +9,31 @@ import ThemeToggle from "./shared/ThemeToggle";
 import { mockData } from "../data/mockData";
 import mypic from "../assets/images/mypic.jpg";
 
+import NotificationModal from "./NotificationModal";
+
+const INITIAL_NOTIFICATIONS = [
+  {
+    id: 3,
+    type: "work",
+    title: "Open for Opportunities",
+    message: "Biniyam is currently available for Full-Stack & AI Engineer roles.",
+    time: "1d ago",
+    read: false,
+    link: "/contact",
+    actionText: "Get in touch",
+  },
+  {
+    id: 4,
+    type: "blog",
+    title: "New Technical Article Published",
+    message: "Read about building production RAG pipelines with Node.js & LanceDB.",
+    time: "2d ago",
+    read: true,
+    link: "/blog",
+    actionText: "Read Article",
+  },
+];
+
 const MENU_SECTIONS = [
   {
     items: [
@@ -97,7 +122,22 @@ function UserMenu({ onClose }) {
 export default function Header({ onSearchOpen, onMenuOpen }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
   const menuRef = useRef(null);
+  const notifRef = useRef(null);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleMarkAllAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleNotificationClick = (id) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  };
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -109,6 +149,18 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!notifOpen) return;
+    const handler = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [notifOpen]);
+
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-ink-650/50 bg-ink-950/80 px-3 py-2.5 backdrop-blur-xl sm:px-5 sm:py-3 lg:ml-20 lg:px-6 xl:ml-24 xl:px-8">
@@ -123,19 +175,20 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
             <Menu size={18} />
           </button>
 
+          {/* Back button — hidden on mobile, visible on desktop */}
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 rounded-full border border-ink-650 bg-ink-800 px-4 py-2 text-sm font-medium text-zinc-400 transition hover:border-accent-400/50 hover:text-white"
+            className="hidden sm:flex items-center gap-2 rounded-full border border-ink-650 bg-ink-800 px-4 py-2 text-sm font-medium text-zinc-400 transition hover:border-accent-400/50 hover:text-white"
           >
             <ArrowLeft size={15} />
-            <span className="hidden sm:inline">Back</span>
+            <span>Back</span>
           </button>
         </div>
 
         <div className="flex items-center justify-end gap-1.5 sm:gap-2">
           <button
             onClick={onSearchOpen}
-            className="flex items-center gap-2.5 w-44 sm:w-60 md:w-72 justify-between rounded-full border border-ink-650/80 bg-ink-800/80 px-3.5 py-1.5 text-xs text-zinc-400 transition-all hover:border-accent-400/50 hover:bg-ink-800 hover:text-zinc-200 shadow-sm"
+            className="hidden sm:flex items-center gap-2.5 w-44 sm:w-60 md:w-72 justify-between rounded-full border border-ink-650/80 bg-ink-800/80 px-3.5 py-1.5 text-xs text-zinc-400 transition-all hover:border-accent-400/50 hover:bg-ink-800 hover:text-zinc-200 shadow-sm"
           >
             <div className="flex items-center gap-2 min-w-0">
               <Search size={14} className="text-accent-400 shrink-0" />
@@ -146,22 +199,43 @@ export default function Header({ onSearchOpen, onMenuOpen }) {
             </kbd>
           </button>
 
+          {/* Hire Me button */}
           <button
             onClick={() => navigate("/contact")}
-            className="hidden items-center gap-1.5 text-xs text-zinc-400 transition hover:text-accent-300 md:flex"
+            className="flex items-center gap-1.5 rounded-full border border-accent-500/30 bg-accent-500/10 px-3.5 py-1.5 text-xs font-semibold text-accent-300 transition-all hover:border-accent-400/60 hover:bg-accent-500/20 hover:text-white"
+            title="Get in touch"
           >
-            <Briefcase size={12} />
-            <span className="hidden lg:inline">Hire</span>
+            <Briefcase size={13} className="text-accent-400 shrink-0" />
+            <span>Hire Me</span>
           </button>
 
           <ThemeToggle />
 
-          <button
-            className="grid h-11 w-11 place-items-center rounded-full border border-ink-650 bg-ink-800 text-zinc-400 transition hover:border-accent-400/50 hover:text-accent-300"
-            aria-label="Notifications"
-          >
-            <Bell size={16} />
-          </button>
+          <div className="relative" ref={notifRef}>
+            <button
+              onClick={() => setNotifOpen((v) => !v)}
+              className="relative grid h-11 w-11 place-items-center rounded-full border border-ink-650 bg-ink-800 text-zinc-400 transition hover:border-accent-400/50 hover:text-accent-300"
+              aria-label="Notifications"
+            >
+              <Bell size={16} />
+              {unreadCount > 0 && (
+                <span className="absolute top-2 right-2 flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-400 opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent-500" />
+                </span>
+              )}
+            </button>
+
+            {/* Notifications Modal */}
+            <NotificationModal
+              isOpen={notifOpen}
+              onClose={() => setNotifOpen(false)}
+              notifications={notifications}
+              onMarkAllAsRead={handleMarkAllAsRead}
+              onNotificationClick={handleNotificationClick}
+            />
+          </div>
+
 
           {/* Avatar + dropdown */}
           <div className="relative" ref={menuRef}>

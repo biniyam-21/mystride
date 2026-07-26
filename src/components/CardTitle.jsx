@@ -2,29 +2,36 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function CardTitle({ title }) {
+export default function CardTitle({ title, onPrev, onNext, showControls = false }) {
+  const hasControls = showControls || (Boolean(onPrev) && Boolean(onNext));
+
   return (
-    <div className="flex items-center justify-between">
-      <h2 className="text-lg font-bold text-white">{title}</h2>
-      <div className="flex gap-1">
-        {[ChevronLeft, ChevronRight].map((Icon, index) => (
+    <div className="flex items-center justify-between gap-2">
+      <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">{title}</h2>
+      {hasControls && (
+        <div className="flex items-center gap-1">
           <motion.button
-            key={index}
-            whileHover={{ scale: 1.12 }}
+            type="button"
+            onClick={onPrev}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            transition={{ duration: 0.15 }}
-            className="grid h-8 w-8 place-items-center rounded-full border border-ink-650 bg-ink-950/50 text-zinc-400 transition-colors duration-150 hover:border-accent-400/40 hover:bg-accent-500/10 hover:text-accent-300"
+            aria-label="Previous"
+            className="flex h-6 w-6 items-center justify-center rounded-lg border border-ink-650 bg-ink-950/60 text-zinc-400 transition-colors hover:border-accent-400/40 hover:bg-accent-500/15 hover:text-accent-300"
           >
-            <motion.span
-              whileHover={{ x: index === 0 ? -1 : 1 }}
-              transition={{ duration: 0.15 }}
-              className="flex"
-            >
-              <Icon size={15} />
-            </motion.span>
+            <ChevronLeft size={14} />
           </motion.button>
-        ))}
-      </div>
+          <motion.button
+            type="button"
+            onClick={onNext}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            aria-label="Next"
+            className="flex h-6 w-6 items-center justify-center rounded-lg border border-ink-650 bg-ink-950/60 text-zinc-400 transition-colors hover:border-accent-400/40 hover:bg-accent-500/15 hover:text-accent-300"
+          >
+            <ChevronRight size={14} />
+          </motion.button>
+        </div>
+      )}
     </div>
   );
 }

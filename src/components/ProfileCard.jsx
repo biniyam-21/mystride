@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Mail, Download, ArrowRight, MapPin } from "lucide-react";
 import Card from "./Card";
 import { mockData } from "../data/mockData";
+import { RESUME_PDF_URL } from "../data/resume";
 import mypic from "../assets/images/mypic.jpg";
 
 function IconGithub() {
@@ -133,14 +134,15 @@ export default function ProfileCard() {
             <span className="hidden sm:inline">View Projects</span>
             <span className="sm:hidden">Projects</span>
           </button>
-          <button
-            onClick={() => navigate("/resume")}
+          <a
+            href={RESUME_PDF_URL}
+            download
             className="flex items-center justify-center gap-2 rounded-xl border border-ink-650 bg-ink-800 px-3 py-2 text-xs sm:text-sm font-semibold text-zinc-200 transition hover:border-accent-400/60 hover:text-white active:scale-95"
           >
             <Download size={14} className="sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Resume</span>
+            <span className="hidden sm:inline">Download CV</span>
             <span className="sm:hidden">CV</span>
-          </button>
+          </a>
         </div>
       </div>
     </Card>

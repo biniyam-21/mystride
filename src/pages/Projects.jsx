@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ExternalLink, TrendingUp, Filter } from "lucide-react";
+import { Search, ExternalLink, TrendingUp, Filter, Layers } from "lucide-react";
 import PageWrapper from "../components/shared/PageWrapper";
 import Card from "../components/Card";
 import FeaturedProjects from "../components/FeaturedProjects";
+import ProjectArchitectureModal from "../components/ProjectArchitectureModal";
 import { projects, allTags } from "../data/projects";
 import { useScrollReveal, useStaggerReveal } from "../hooks/gsapUtils";
 
@@ -15,9 +16,12 @@ function IconGithub() {
   );
 }
 
-function ProjectCard({ project }) {
+function ProjectCard({ project, onOpenArchitecture }) {
   return (
-    <Card className="group flex h-full flex-col overflow-hidden transition-all duration-250 hover:border-accent-400/35 hover:shadow-glow">
+    <Card
+      onClick={() => onOpenArchitecture(project.id)}
+      className="group flex h-full cursor-pointer flex-col overflow-hidden transition-all duration-250 hover:border-accent-400/50 hover:shadow-glow"
+    >
       {/* Gradient banner */}
       <div className={`relative h-16 sm:h-20 bg-gradient-to-br ${project.accent || "from-accent-600/25 to-blue-600/15"}`}>
         <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_40%,rgba(0,0,0,0.4))]" />
@@ -26,7 +30,7 @@ function ProjectCard({ project }) {
             Featured
           </span>
         )}
-        <div className="absolute right-2 sm:right-3 top-2 sm:top-3 flex gap-1">
+        <div className="absolute right-2 sm:right-3 top-2 sm:top-3 flex gap-1 z-10" onClick={(e) => e.stopPropagation()}>
           {project.github && (
             <a
               href={project.github}
@@ -54,9 +58,12 @@ function ProjectCard({ project }) {
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-3 sm:p-5">
-        <h3 className="font-display font-semibold text-sm sm:text-base text-white transition-colors group-hover:text-accent-200 line-clamp-2">
-          {project.title}
-        </h3>
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display font-semibold text-sm sm:text-base text-white transition-colors group-hover:text-accent-200 line-clamp-2">
+            {project.title}
+          </h3>
+        </div>
+
         <p className="mt-2 flex-1 text-xs sm:text-sm leading-5 text-zinc-400 line-clamp-3">{project.description}</p>
 
         {/* Impact metric */}
@@ -76,15 +83,16 @@ function ProjectCard({ project }) {
           ))}
         </div>
 
-        {/* Footer */}
-        <div className="mt-3 sm:mt-4 flex items-center gap-2 sm:gap-4 border-t border-ink-650/60 pt-2 sm:pt-3 text-[10px] sm:text-xs text-zinc-400">
+        {/* Footer with Architecture CTA */}
+        <div className="mt-3 sm:mt-4 flex items-center justify-between border-t border-ink-650/60 pt-2 sm:pt-3 text-[10px] sm:text-xs text-zinc-400">
           <span className="flex items-center gap-1">
             <span className="h-2 w-2 rounded-full" style={{ background: project.langColor }} />
             <span className="hidden sm:inline">{project.language}</span>
-            <span className="sm:hidden truncate">{project.language.split("/")[0]}</span>
           </span>
-          <span className="ml-auto whitespace-nowrap">
-            {project.github ? "Open source" : "Company"}
+
+          <span className="inline-flex items-center gap-1 font-semibold text-accent-400 group-hover:text-accent-300 transition-colors">
+            <Layers size={12} />
+            <span>Architecture Specs ↗</span>
           </span>
         </div>
       </div>
@@ -96,6 +104,7 @@ export default function Projects() {
   const [search, setSearch] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [selectedArchitectureId, setSelectedArchitectureId] = useState(null);
 
   const headerRef  = useScrollReveal({ y: 20, duration: 0.55 });
   const filtersRef = useScrollReveal({ y: 16, duration: 0.5, delay: 0.08 });
@@ -118,15 +127,24 @@ export default function Projects() {
   return (
     <PageWrapper>
       <div className="space-y-6">
+        {/* Architecture Viewer Modal */}
+        <ProjectArchitectureModal
+          projectId={selectedArchitectureId}
+          onClose={() => setSelectedArchitectureId(null)}
+        />
+
         {/* Featured showcase */}
-        <FeaturedProjects projects={featuredProjects} />
+        <FeaturedProjects
+          projects={featuredProjects}
+          onOpenArchitecture={(id) => setSelectedArchitectureId(id)}
+        />
 
         {/* Header */}
         <div ref={headerRef} className="flex items-end justify-between gap-4">
           <div>
             <h1 className="font-display text-2xl font-bold text-white">Projects</h1>
             <p className="mt-1 text-sm text-zinc-400">
-              {projects.length} projects · from production ERP systems to solo builds
+              {projects.length} projects · Click any project to inspect full Architecture Specifications
             </p>
           </div>
           <div className="hidden items-center gap-2 sm:flex">
@@ -182,7 +200,8 @@ export default function Projects() {
           ref={gridRef}
           layout
           className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2"
-        >          <AnimatePresence mode="popLayout">
+        >
+          <AnimatePresence mode="popLayout">
             {filtered.map((project) => (
               <motion.div
                 key={project.id}
@@ -192,7 +211,10 @@ export default function Projects() {
                 exit={{ opacity: 0, scale: 0.97 }}
                 transition={{ duration: 0.22 }}
               >
-                <ProjectCard project={project} />
+                <ProjectCard
+                  project={project}
+                  onOpenArchitecture={(id) => setSelectedArchitectureId(id)}
+                />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -213,3 +235,4 @@ export default function Projects() {
     </PageWrapper>
   );
 }
+

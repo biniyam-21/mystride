@@ -34,6 +34,7 @@ import Footer from "./components/shared/Footer";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
 import Blog from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
 import Stats from "./pages/Stats";
@@ -62,6 +63,7 @@ function AnimatedRoutes() {
         <Route path="/"               element={<Dashboard />}       />
         <Route path="/about"          element={<About />}           />
         <Route path="/projects"       element={<Projects />}        />
+        <Route path="/projects/:id"   element={<ProjectDetail />}   />
         <Route path="/blog"           element={<Blog />}            />
         <Route path="/blog/:id"       element={<BlogDetail />}      />
         <Route path="/stats"          element={<Stats />}           />

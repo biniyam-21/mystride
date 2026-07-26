@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, ChevronLeft, ChevronRight, TrendingUp, Sparkles } from "lucide-react";
+import { ExternalLink, ChevronLeft, ChevronRight, TrendingUp, Sparkles, Layers } from "lucide-react";
 
 function IconGithub() {
   return (
@@ -66,7 +66,7 @@ const slideVariants = {
   exit:  (dir) => ({ opacity: 0, x: dir > 0 ? -40 : 40 }),
 };
 
-export default function FeaturedProjects({ projects }) {
+export default function FeaturedProjects({ projects, onOpenArchitecture }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const project = projects[index];
@@ -171,6 +171,13 @@ export default function FeaturedProjects({ projects }) {
                 {project.github ? "Open source" : "Company project"}
               </span>
               <div className="ml-auto flex gap-2">
+                <button
+                  onClick={() => onOpenArchitecture && onOpenArchitecture(project.id)}
+                  className="flex items-center gap-1.5 rounded-xl border border-accent-400/40 bg-accent-500/15 px-3 py-2 text-xs font-semibold text-accent-300 transition hover:bg-accent-500/25 shadow-glow"
+                >
+                  <Layers size={13} />
+                  <span>Inspect Architecture ↗</span>
+                </button>
                 {project.github && (
                   <a
                     href={project.github}

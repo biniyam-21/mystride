@@ -45,8 +45,7 @@ export default function Footer() {
           <div className="flex flex-col items-center gap-1 sm:items-start">
             <p className="flex items-center gap-1.5 text-xs text-zinc-400">
               <Code2 size={12} className="text-accent-400" />
-              <span>Designed & Built by</span>
-              <span className="font-medium text-zinc-300">Biniyam Tesfu</span>
+              <span>Building reliable software one project at a time.</span>
             </p>
             <p className="text-[11px] text-zinc-400">
               &copy; 2026 — All rights reserved

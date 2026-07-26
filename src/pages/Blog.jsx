@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Clock, Pin, Plus, X, Image as ImageIcon, Heart, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, Clock, Pin, Plus, X, Image as ImageIcon, Heart, Sparkles, ChevronLeft, ChevronRight, Lock, Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "../components/shared/PageWrapper";
 import Card from "../components/Card";
 import { blogPosts as fallbackPosts } from "../data/blogPosts";
 
-const POSTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 5;
 
 const stagger = { animate: { transition: { staggerChildren: 0.08 } } };
 const item = {
@@ -19,11 +19,25 @@ export default function Blog() {
   const [posts, setPosts] = useState(fallbackPosts);
   const [activeTag, setActiveTag] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Auth & Modal States
+  const [isAuthorized, setIsAuthorized] = useState(
+    () => sessionStorage.getItem("blog-auth") === "1"
+  );
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [pendingAction, setPendingAction] = useState(null);
+
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPost, setEditingPost] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingPost, setDeletingPost] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // New post form state
-  const [newPost, setNewPost] = useState({
+  // Form state for Create & Edit
+  const [formPost, setFormPost] = useState({
     title: "",
     excerpt: "",
     content: "",
@@ -60,20 +74,91 @@ export default function Blog() {
     setCurrentPage(1);
   };
 
+  // Authorization helper
+  const requireAuthThen = (action) => {
+    if (isAuthorized) {
+      action();
+    } else {
+      setPasswordInput("");
+      setAuthError("");
+      setPendingAction(() => action);
+      setShowAuthModal(true);
+    }
+  };
+
+  const handleAuthSubmit = (e) => {
+    e.preventDefault();
+    if (passwordInput.trim() === "biniyam") {
+      setIsAuthorized(true);
+      sessionStorage.setItem("blog-auth", "1");
+      setShowAuthModal(false);
+      setAuthError("");
+      if (pendingAction) {
+        pendingAction();
+        setPendingAction(null);
+      }
+    } else {
+      setAuthError("Incorrect password. Author authorization required.");
+    }
+  };
+
+  // Create triggers
+  const handleCreateClick = () => {
+    requireAuthThen(() => {
+      setFormPost({
+        title: "",
+        excerpt: "",
+        content: "",
+        tags: "Backend, Engineering",
+        readTime: "5 min",
+        coverImage: "",
+        pinned: false,
+      });
+      setShowCreateModal(true);
+    });
+  };
+
+  // Edit triggers
+  const handleEditClick = (e, post) => {
+    e.stopPropagation();
+    requireAuthThen(() => {
+      setEditingPost(post);
+      setFormPost({
+        title: post.title || "",
+        excerpt: post.excerpt || "",
+        content: post.content || "",
+        tags: Array.isArray(post.tags) ? post.tags.join(", ") : post.tags || "",
+        readTime: post.readTime || "5 min",
+        coverImage: post.coverImage || "",
+        pinned: !!post.pinned,
+      });
+      setShowEditModal(true);
+    });
+  };
+
+  // Delete triggers
+  const handleDeleteClick = (e, post) => {
+    e.stopPropagation();
+    requireAuthThen(() => {
+      setDeletingPost(post);
+      setShowDeleteModal(true);
+    });
+  };
+
   const handleImageFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
-      setNewPost((p) => ({ ...p, coverImage: reader.result }));
+      setFormPost((p) => ({ ...p, coverImage: reader.result }));
     };
     reader.readAsDataURL(file);
   };
 
+  // Submit Create
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
-    if (!newPost.title.trim() || !newPost.content.trim()) return;
+    if (!formPost.title.trim() || !formPost.content.trim()) return;
 
     setSubmitting(true);
     try {
@@ -82,28 +167,72 @@ export default function Blog() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...newPost,
-          tags: newPost.tags.split(",").map((t) => t.trim()),
+          ...formPost,
+          tags: formPost.tags.split(",").map((t) => t.trim()),
         }),
       });
 
       const data = await res.json();
       if (res.ok && data.success) {
         setShowCreateModal(false);
-        setNewPost({
-          title: "",
-          excerpt: "",
-          content: "",
-          tags: "Backend, Engineering",
-          readTime: "5 min",
-          coverImage: "",
-          pinned: false,
-        });
         await fetchPosts();
         setCurrentPage(1);
       }
     } catch (err) {
       console.error("Error creating blog post:", err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Submit Edit
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editingPost || !formPost.title.trim() || !formPost.content.trim()) return;
+
+    setSubmitting(true);
+    try {
+      const baseUrl = getBaseUrl();
+      const res = await fetch(`${baseUrl}/api/v1/blogs/${editingPost.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formPost,
+          tags: formPost.tags.split(",").map((t) => t.trim()),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setShowEditModal(false);
+        setEditingPost(null);
+        await fetchPosts();
+      }
+    } catch (err) {
+      console.error("Error updating blog post:", err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Confirm Delete
+  const handleConfirmDelete = async () => {
+    if (!deletingPost) return;
+    setSubmitting(true);
+    try {
+      const baseUrl = getBaseUrl();
+      const res = await fetch(`${baseUrl}/api/v1/blogs/${deletingPost.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setShowDeleteModal(false);
+        setDeletingPost(null);
+        setPosts((prev) => prev.filter((p) => String(p.id) !== String(deletingPost.id)));
+      }
+    } catch (err) {
+      console.error("Error deleting blog post:", err);
     } finally {
       setSubmitting(false);
     }
@@ -131,7 +260,7 @@ export default function Blog() {
             </p>
           </div>
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={handleCreateClick}
             className="flex items-center gap-1.5 rounded-xl bg-accent-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-accent-500 shadow-glow"
           >
             <Plus size={14} />
@@ -175,7 +304,7 @@ export default function Blog() {
                 )}
 
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
                       {post.pinned && (
                         <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-400">
@@ -195,6 +324,24 @@ export default function Blog() {
                     <h2 className="font-semibold text-white group-hover:text-accent-200 transition-colors">
                       {post.title}
                     </h2>
+                  </div>
+
+                  {/* Edit & Delete Action Buttons */}
+                  <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={(e) => handleEditClick(e, post)}
+                      title="Edit Article"
+                      className="grid h-7 w-7 place-items-center rounded-lg border border-ink-650 bg-ink-800/80 text-zinc-400 transition hover:border-accent-400/50 hover:bg-accent-500/10 hover:text-accent-300"
+                    >
+                      <Pencil size={12} />
+                    </button>
+                    <button
+                      onClick={(e) => handleDeleteClick(e, post)}
+                      title="Delete Article"
+                      className="grid h-7 w-7 place-items-center rounded-lg border border-ink-650 bg-ink-800/80 text-zinc-400 transition hover:border-rose-500/50 hover:bg-rose-500/10 hover:text-rose-400"
+                    >
+                      <Trash2 size={12} />
+                    </button>
                   </div>
                 </div>
 
@@ -274,6 +421,78 @@ export default function Blog() {
         )}
       </div>
 
+      {/* Password Authorization Modal */}
+      <AnimatePresence>
+        {showAuthModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-sm overflow-hidden rounded-2xl border border-ink-650 bg-ink-900 p-6 shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-ink-650/60 pb-3">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Lock size={16} className="text-amber-400" />
+                  Author Verification
+                </h3>
+                <button
+                  onClick={() => setShowAuthModal(false)}
+                  className="rounded-lg p-1 text-zinc-400 hover:bg-ink-700 hover:text-white"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleAuthSubmit} className="space-y-3">
+                <p className="text-xs text-zinc-400">
+                  Please enter the author password to create a new blog post.
+                </p>
+
+                <div>
+                  <input
+                    type="password"
+                    required
+                    autoFocus
+                    placeholder="Enter password..."
+                    value={passwordInput}
+                    onChange={(e) => {
+                      setPasswordInput(e.target.value);
+                      if (authError) setAuthError("");
+                    }}
+                    className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
+                  />
+                  {authError && (
+                    <p className="mt-1.5 text-xs text-rose-400 font-medium">{authError}</p>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAuthModal(false)}
+                    className="rounded-xl px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-xl bg-accent-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-accent-500 shadow-glow"
+                  >
+                    Verify & Unlock
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Create Post Modal */}
       <AnimatePresence>
         {showCreateModal && (
@@ -309,8 +528,8 @@ export default function Blog() {
                     type="text"
                     required
                     placeholder="Article Title..."
-                    value={newPost.title}
-                    onChange={(e) => setNewPost((p) => ({ ...p, title: e.target.value }))}
+                    value={formPost.title}
+                    onChange={(e) => setFormPost((p) => ({ ...p, title: e.target.value }))}
                     className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
                   />
                 </div>
@@ -320,8 +539,8 @@ export default function Blog() {
                   <input
                     type="text"
                     placeholder="Brief summary..."
-                    value={newPost.excerpt}
-                    onChange={(e) => setNewPost((p) => ({ ...p, excerpt: e.target.value }))}
+                    value={formPost.excerpt}
+                    onChange={(e) => setFormPost((p) => ({ ...p, excerpt: e.target.value }))}
                     className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
                   />
                 </div>
@@ -332,8 +551,8 @@ export default function Blog() {
                     required
                     rows={6}
                     placeholder="Write your article here..."
-                    value={newPost.content}
-                    onChange={(e) => setNewPost((p) => ({ ...p, content: e.target.value }))}
+                    value={formPost.content}
+                    onChange={(e) => setFormPost((p) => ({ ...p, content: e.target.value }))}
                     className="w-full resize-none rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
                   />
                 </div>
@@ -344,8 +563,8 @@ export default function Blog() {
                     <input
                       type="text"
                       placeholder="React, Backend, AI"
-                      value={newPost.tags}
-                      onChange={(e) => setNewPost((p) => ({ ...p, tags: e.target.value }))}
+                      value={formPost.tags}
+                      onChange={(e) => setFormPost((p) => ({ ...p, tags: e.target.value }))}
                       className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
                     />
                   </div>
@@ -354,8 +573,8 @@ export default function Blog() {
                     <input
                       type="text"
                       placeholder="5 min"
-                      value={newPost.readTime}
-                      onChange={(e) => setNewPost((p) => ({ ...p, readTime: e.target.value }))}
+                      value={formPost.readTime}
+                      onChange={(e) => setFormPost((p) => ({ ...p, readTime: e.target.value }))}
                       className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
                     />
                   </div>
@@ -373,9 +592,9 @@ export default function Blog() {
                     onChange={handleImageFileChange}
                     className="w-full text-xs text-zinc-400 file:mr-3 file:rounded-xl file:border-0 file:bg-ink-800 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-accent-300 hover:file:bg-ink-700 cursor-pointer"
                   />
-                  {newPost.coverImage && (
+                  {formPost.coverImage && (
                     <div className="mt-2 h-20 w-32 overflow-hidden rounded-lg border border-accent-400/40">
-                      <img src={newPost.coverImage} alt="Preview" className="h-full w-full object-cover" />
+                      <img src={formPost.coverImage} alt="Preview" className="h-full w-full object-cover" />
                     </div>
                   )}
                 </div>
@@ -397,6 +616,181 @@ export default function Blog() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Post Modal */}
+      <AnimatePresence>
+        {showEditModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-lg overflow-hidden rounded-2xl border border-ink-650 bg-ink-900 p-6 shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-ink-650/60 pb-3">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <Pencil size={18} className="text-accent-400" />
+                  Edit Article
+                </h3>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="rounded-lg p-1 text-zinc-400 hover:bg-ink-700 hover:text-white"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-zinc-400">Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={formPost.title}
+                    onChange={(e) => setFormPost((p) => ({ ...p, title: e.target.value }))}
+                    className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-zinc-400">Excerpt / Short Summary</label>
+                  <input
+                    type="text"
+                    value={formPost.excerpt}
+                    onChange={(e) => setFormPost((p) => ({ ...p, excerpt: e.target.value }))}
+                    className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-zinc-400">Full Content (Markdown)</label>
+                  <textarea
+                    required
+                    rows={6}
+                    value={formPost.content}
+                    onChange={(e) => setFormPost((p) => ({ ...p, content: e.target.value }))}
+                    className="w-full resize-none rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-zinc-400">Tags (comma separated)</label>
+                    <input
+                      type="text"
+                      value={formPost.tags}
+                      onChange={(e) => setFormPost((p) => ({ ...p, tags: e.target.value }))}
+                      className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-zinc-400">Read Time</label>
+                    <input
+                      type="text"
+                      value={formPost.readTime}
+                      onChange={(e) => setFormPost((p) => ({ ...p, readTime: e.target.value }))}
+                      className="w-full rounded-xl border border-ink-650 bg-ink-950/60 px-3.5 py-2 text-sm text-white outline-none focus:border-accent-400/60"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-zinc-400 flex items-center gap-1">
+                    <ImageIcon size={13} className="text-accent-400" />
+                    Cover Picture
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageFileChange}
+                    className="w-full text-xs text-zinc-400 file:mr-3 file:rounded-xl file:border-0 file:bg-ink-800 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-accent-300 hover:file:bg-ink-700 cursor-pointer"
+                  />
+                  {formPost.coverImage && (
+                    <div className="mt-2 h-20 w-32 overflow-hidden rounded-lg border border-accent-400/40">
+                      <img src={formPost.coverImage} alt="Preview" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2 border-t border-ink-650/60">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="rounded-xl px-4 py-2 text-xs font-medium text-zinc-400 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="rounded-xl bg-accent-600 px-5 py-2 text-xs font-semibold text-white hover:bg-accent-500 disabled:opacity-50"
+                  >
+                    {submitting ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteModal && deletingPost && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="w-full max-w-sm overflow-hidden rounded-2xl border border-ink-650 bg-ink-900 p-6 shadow-2xl space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-ink-650/60 pb-3">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Trash2 size={16} className="text-rose-400" />
+                  Delete Article?
+                </h3>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="rounded-lg p-1 text-zinc-400 hover:bg-ink-700 hover:text-white"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                Are you sure you want to delete <strong className="text-white">"{deletingPost.title}"</strong>? This action cannot be undone.
+              </p>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteModal(false)}
+                  className="rounded-xl px-3.5 py-1.5 text-xs font-medium text-zinc-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  disabled={submitting}
+                  className="rounded-xl bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-rose-500 disabled:opacity-50"
+                >
+                  {submitting ? "Deleting..." : "Delete Permanently"}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

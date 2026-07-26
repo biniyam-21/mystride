@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus, Mail } from "lucide-react";
+import { Send, Sparkles, X, RotateCcw, ChevronRight, Minus, Mail, Maximize2, Minimize2 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchRAGResponse } from "../../services/ragApi";
 import { suggestedQuestions } from "../../data/ragMock";
@@ -392,6 +392,7 @@ export default function AskMeWidget() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState([WELCOME]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -523,11 +524,17 @@ export default function AskMeWidget() {
             exit="exit"
             transition={{ type: "spring", stiffness: 340, damping: 28 }}
             className={`
-              fixed z-50 flex flex-col overflow-hidden
+              fixed z-50 flex flex-col overflow-hidden transition-all duration-300 ease-out
               border border-ink-650/80 bg-ink-900/96 shadow-2xl shadow-black/60 backdrop-blur-xl
               bottom-0 left-0 right-0 rounded-t-2xl
-              lg:bottom-24 lg:right-6 lg:left-auto lg:w-[380px] lg:rounded-2xl
-              ${minimized ? "h-auto" : "max-h-[88vh] lg:h-[530px] lg:max-h-none"}
+              lg:bottom-24 lg:right-6 lg:left-auto lg:rounded-2xl
+              ${
+                minimized
+                  ? "h-auto lg:w-[480px]"
+                  : isExpanded
+                  ? "max-h-[92vh] lg:w-[760px] lg:h-[660px] lg:max-h-none"
+                  : "max-h-[88vh] lg:w-[500px] lg:h-[560px] lg:max-h-none"
+              }
             `}
           >
             {/* Header */}
@@ -541,6 +548,15 @@ export default function AskMeWidget() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
+                {/* Widen / Expand Toggle Button */}
+                <button
+                  onClick={() => setIsExpanded((v) => !v)}
+                  aria-label={isExpanded ? "Collapse width" : "Widen chat"}
+                  title={isExpanded ? "Make narrow" : "Make wider"}
+                  className="hidden lg:grid h-7 w-7 place-items-center rounded-lg text-zinc-400 transition hover:bg-ink-700 hover:text-white"
+                >
+                  {isExpanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+                </button>
                 <button
                   onClick={() => setMinimized((v) => !v)}
                   aria-label={minimized ? "Expand chat" : "Minimize chat"}

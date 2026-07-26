@@ -86,15 +86,17 @@ export const mockData = {
     cells: Array.from({ length: 84 }, (_, i) => [0, 1, 2, 3, 4][(i * 7 + i) % 5]),
   },
   attempts: {
-    total: "6/1200",
-    easy: "2/400",
-    medium: "3/400",
-    hard: "1/400",
+    total: "200+",
+    easy: "98",
+    medium: "94",
+    hard: "22",
   },
   problems: [
-    { title: "Reverse Linked List", topic: "Linked List", difficulty: "Medium" },
-    { title: "Matrix Spiral Walk", topic: "Matrix", difficulty: "Easy" },
-    { title: "Alien Dictionary", topic: "Graph", difficulty: "Hard" },
+    { title: "Two Sum & Hash Map Lookup", topic: "Arrays & Hashing", difficulty: "Easy", time: "O(N)", space: "O(N)" },
+    { title: "LRU Cache Implementation", topic: "Design & Doubly Linked List", difficulty: "Medium", time: "O(1)", space: "O(N)" },
+    { title: "Course Schedule (Topological Sort)", topic: "Graph Theory & BFS", difficulty: "Medium", time: "O(V + E)", space: "O(V + E)" },
+    { title: "Binary Tree Zigzag Traversal", topic: "Trees & Queue", difficulty: "Medium", time: "O(N)", space: "O(N)" },
+    { title: "Alien Dictionary & Directed Graph", topic: "Graph / Topological", difficulty: "Hard", time: "O(V + E)", space: "O(V)" },
   ],
 };
 

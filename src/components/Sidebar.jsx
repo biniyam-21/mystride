@@ -177,7 +177,7 @@ function SidebarContent({ onSearchOpen, onClose }) {
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-zinc-200">{mockData.user.name}</p>
-            <p className="truncate text-[10px] text-emerald-400">● Available for work</p>
+            <p className="truncate text-[10px] text-emerald-400">Available for work</p>
           </div>
         </div>
 
