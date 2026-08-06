@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Clock, Pin, Plus, X, Image as ImageIcon, Heart, Sparkles, ChevronLeft, ChevronRight, Lock, Pencil, Trash2 } from "lucide-react";
+import { Eye, Clock, Pin, Plus, X, Image as ImageIcon, Heart, Sparkles, ChevronLeft, ChevronRight, Lock, Pencil, Trash2, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "../components/shared/PageWrapper";
 import Card from "../components/Card";
@@ -252,37 +252,71 @@ export default function Blog() {
     <PageWrapper>
       <div className="mx-auto max-w-2xl space-y-6">
         {/* Title + Action */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Blog</h1>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h1 className="text-2xl font-bold text-white">Blog</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-400/30 bg-accent-500/15 px-3 py-1 text-xs font-semibold text-accent-300 shadow-glow">
+                <Sparkles size={13} className="text-accent-400 animate-pulse" />
+                <span>{posts.length} {posts.length === 1 ? "Article Available" : "Articles Available"}</span>
+              </span>
+            </div>
             <p className="mt-1 text-sm text-zinc-400">
-              Thoughts on engineering, systems, and craft
+              Thoughts on engineering, systems, architecture, and craft
             </p>
           </div>
           <button
             onClick={handleCreateClick}
-            className="flex items-center gap-1.5 rounded-xl bg-accent-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-accent-500 shadow-glow"
+            className="flex items-center gap-1.5 rounded-xl bg-accent-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-accent-500 shadow-glow w-fit shrink-0"
           >
             <Plus size={14} />
             Create Post
           </button>
         </div>
 
-        {/* Tag filter */}
-        <div className="flex flex-wrap gap-2">
-          {["All", ...allTags].map((tag) => (
-            <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                activeTag === tag
-                  ? "bg-accent-500/20 text-accent-200 ring-1 ring-accent-400/30"
-                  : "border border-ink-650 bg-ink-950/50 text-zinc-400 hover:text-zinc-300"
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
+        {/* Aesthetic Stats & Tag Bar */}
+        <div className="rounded-2xl border border-ink-650/80 bg-ink-950/60 p-3 sm:p-3.5 space-y-3 shadow-panel">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink-650/40 pb-2.5 text-xs text-zinc-400">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-white flex items-center gap-1.5">
+                <BookOpen size={14} className="text-accent-400" />
+                <span>{filtered.length} {filtered.length === 1 ? "Post" : "Posts"} Available</span>
+              </span>
+              {activeTag !== "All" && (
+                <span className="text-[11px] text-zinc-500 font-mono">
+                  (Filtered by <span className="text-accent-300">#{activeTag}</span>)
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 text-[11px]">
+              <span className="flex items-center gap-1 text-zinc-400">
+                <Pin size={11} className="text-amber-400" />
+                <strong className="text-white">{posts.filter((p) => p.pinned).length}</strong> Pinned
+              </span>
+              <span className="flex items-center gap-1 text-zinc-400">
+                <Sparkles size={11} className="text-accent-400" />
+                <strong className="text-white">{allTags.length}</strong> Topics
+              </span>
+            </div>
+          </div>
+
+          {/* Tag filter chips */}
+          <div className="flex flex-wrap gap-1.5">
+            {["All", ...allTags].map((tag) => (
+              <button
+                key={tag}
+                onClick={() => handleTagClick(tag)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                  activeTag === tag
+                    ? "bg-accent-500/20 text-accent-200 ring-1 ring-accent-400/40 shadow-glow"
+                    : "border border-ink-650/80 bg-ink-900/60 text-zinc-400 hover:border-accent-400/30 hover:text-white"
+                }`}
+              >
+                {tag} {tag === "All" ? `(${posts.length})` : `(${posts.filter((p) => p.tags?.includes(tag)).length})`}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Articles List */}

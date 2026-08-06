@@ -121,9 +121,6 @@ export default function ProfileCard() {
         </div>
 
         {/* Professional summary */}
-        <div className="rounded-xl border border-accent-400/15 bg-accent-500/5 p-4">
-          <p className="text-sm leading-6 text-zinc-300">{user.summary}</p>
-        </div>
 
         {/* CTA buttons */}
         <div className="grid w-full grid-cols-2 gap-2">

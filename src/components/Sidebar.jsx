@@ -3,6 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Search, Settings, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
+import BuyMeACoffeeCard from "./BuyMeACoffeeCard";
 import { navItems, mockData } from "../data/mockData";
 import mypic from "../assets/images/mypic.jpg";
 // Variant tree: parent controls icon + label children together
@@ -204,6 +205,10 @@ function SidebarContent({ onSearchOpen, onClose }) {
             </>
           )}
         </MotionNavLink>
+
+        <div className="pt-1">
+          <BuyMeACoffeeCard compact />
+        </div>
       </div>
     </>
   );

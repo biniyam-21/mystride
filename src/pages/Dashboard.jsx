@@ -4,6 +4,7 @@ import { Hammer, ArrowRight, Sun, Sunset, Moon, Coffee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "../components/shared/PageWrapper";
 import ProfileCard from "../components/ProfileCard";
+import BuyMeACoffeeCard from "../components/BuyMeACoffeeCard";
 import RankingCard from "../components/RankingCard";
 import AchievementCard from "../components/AchievementCard";
 import StreakCard from "../components/StreakCard";
@@ -158,8 +159,9 @@ export default function Dashboard() {
           variants={stagger}
           className="grid gap-3 sm:gap-4 xl:grid-cols-[minmax(260px,28rem)_minmax(0,1fr)]"
         >
-          <motion.div variants={slideRight} className="w-full min-w-0 sm:min-w-0 xl:max-w-[28rem]">
+          <motion.div variants={slideRight} className="w-full min-w-0 sm:min-w-0 xl:max-w-[28rem] space-y-3 sm:space-y-4">
             <ProfileCard />
+            <BuyMeACoffeeCard />
           </motion.div>
 
           <motion.div variants={stagger} className="space-y-3 sm:space-y-4 w-full flex-1 min-w-0">

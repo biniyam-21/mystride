@@ -37,15 +37,15 @@ const INITIAL_NOTIFICATIONS = [
 const MENU_SECTIONS = [
   {
     items: [
-      { icon: User,     label: "About Me", path: "/about" },
-      { icon: FileText, label: "Resume",   path: "/resume" },
+      { icon: User, label: "About Me", path: "/about" },
+      { icon: FileText, label: "Resume", path: "/resume" },
     ],
   },
   {
     label: "Preferences",
     items: [
-      { icon: Palette,        label: "Theme",  path: "/settings" },
-      { icon: MessageCircle,  label: "Ask Me", path: "/ask" },
+      { icon: Palette, label: "Theme", path: "/settings" },
+      { icon: MessageCircle, label: "Ask My AI Assistant", path: "/ask" },
     ],
   },
 ];
